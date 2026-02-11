@@ -1,4 +1,11 @@
 {
   "Hi": "Hi",
-  "Help": "Help"
+  "Help": "Help",
+  "Login": "Login",
+  "Register": "Register",
+  "Don’t have an account?":"Don’t have an account?",
+  "Email":"Email",
+  "PassWord": "Pass word",
+  "Confirm password": "Confirm password",
+  "Already have an account?": "Already have an account?"
 }

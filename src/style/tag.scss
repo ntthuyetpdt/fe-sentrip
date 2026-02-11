@@ -1,0 +1,22 @@
+.tag-gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 16px;
+  border: 2px solid #FF9F00;
+  border-radius: 8px;
+
+  background-color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 600;
+  color: #FF9F00;
+
+  line-height: 1;
+
+  img {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+  }
+}

@@ -1,4 +1,11 @@
 {
   "Hi": "Chào",
-  "Help": "Trợ giúp"
+  "Help": "Trợ giúp",
+  "Login": "Đăng nhập",
+  "Register": "Đăng kí",
+  "Don’t have an account?": "Chưa có tài khoản?",
+  "Email": "Email",
+  "PassWord": "Mật khẩu",
+  "Confirm password": "Xác nhận mật khẩu",
+  "Already have an account?": "Đã có tài khoản?"
 }

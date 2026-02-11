@@ -1,0 +1,58 @@
+.custom-menu {
+  width: 320px;
+
+  &__list {
+    list-style: none;
+    padding: 12px 0;
+    margin: 0;
+
+    background: #ffffff;
+    border-radius: 0 0 6px 6px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  li {
+    position: relative;
+
+    a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      padding: 14px 20px;
+      font-size: 16px;
+      font-weight: 500;
+      color: #1f2937;
+      text-decoration: none;
+
+      border-radius: 12px;
+      transition: all 0.2s ease;
+    }
+
+    &:hover a {
+      background-color: #f5f7fb;
+    }
+
+    &.active {
+      a {
+        color: #4C1D95;
+        font-weight: 600;
+      }
+
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 8px;
+        bottom: 8px;
+        width: 4px;
+
+        background-color: #4C1D95;
+        border-radius: 0 4px 4px 0;
+      }
+    }
+  }
+}

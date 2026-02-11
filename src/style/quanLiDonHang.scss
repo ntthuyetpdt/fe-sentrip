@@ -1,0 +1,178 @@
+.quanLiDonHang {
+  max-width: 1140px;
+  margin: auto;
+  padding: 12px 24px;
+
+  .bg {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .top-content-QLDH {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+
+    h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #374151;
+      margin: 0;
+      white-space: nowrap;
+    }
+
+    .search-QLDH {
+      width: 100%;
+      max-width: 360px;
+
+      display: flex;
+      align-items: center;
+      padding: 6px 8px;
+
+      background: #fff;
+      border: 2px solid #d1d5db;
+      border-radius: 999px;
+
+      transition: border-color 0.2s ease;
+
+      &:focus-within {
+        border-color: #4C1D95;
+      }
+
+      input {
+        flex: 1;
+        border: none;
+        outline: none;
+        padding-left: 10px;
+
+        font-size: 14px;
+        color: #374151;
+        background: transparent;
+
+        &::placeholder {
+          color: #9ca3af;
+        }
+      }
+
+      .btn-search-QLDH {
+        height: 32px;
+        width: 32px;
+        padding: 0;
+
+        border-radius: 999px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  }
+
+
+  .tab-menu {
+    .ant-tabs-nav {
+      overflow-x: auto;
+      white-space: nowrap;
+      scrollbar-width: none;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+
+    .ant-tabs-tab {
+      flex: 0 0 auto;
+      max-width: unset !important;
+    }
+
+
+    .ant-tabs-tab-btn {
+      white-space: nowrap !important;
+      overflow: visible !important;
+      text-overflow: unset !important;
+    }
+
+    .ant-tabs-nav {
+      margin-bottom: 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .ant-tabs-tab {
+      padding: 10px 0;
+      margin-right: 0px;
+
+      font-size: 15px;
+      font-weight: 500;
+      color: #6b7280;
+
+      transition: all 0.2s ease;
+
+      &:hover {
+        color: #4C1D95;
+      }
+    }
+
+    .ant-tabs-tab-active {
+      .ant-tabs-tab-btn {
+        color: #4C1D95;
+        font-weight: 600;
+      }
+    }
+
+    .ant-tabs-ink-bar {
+      background-color: #4C1D95;
+      height: 2px;
+      border-radius: 2px;
+    }
+
+    .ant-tabs-content {
+      padding-top: 16px;
+    }
+  }
+}
+
+
+@media (max-width: 768px) {
+  .quanLiDonHang {
+    padding: 8px 12px;
+
+    .bg {
+      padding: 16px;
+      gap: 16px;
+    }
+
+    .top-content-QLDH {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+
+      h3 {
+        font-size: 16px;
+        text-align: left;
+      }
+
+      .search-QLDH {
+        max-width: 100%;
+        width: 100%;
+      }
+    }
+
+    .tab-menu {
+      .ant-tabs-nav {
+        overflow-x: auto;
+        white-space: nowrap;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+          display: none;
+        }
+      }
+
+      .ant-tabs-tab {
+        margin-right: 0px;
+        font-size: 14px;
+      }
+    }
+  }
+}
