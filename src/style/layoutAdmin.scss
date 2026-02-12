@@ -1,0 +1,91 @@
+.admin-layout {
+    min-height: 100vh;
+
+    .admin-sider {
+        background: #4c1d95 !important;
+    }
+
+    .admin-logo {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 64px;
+        padding: 10px;
+        img {
+            height: 45px;
+            object-fit: contain;
+        }
+    }
+
+    
+    .ant-menu {
+        background: #4c1d95 !important;
+    }
+
+    .ant-menu-item,
+    .ant-menu-submenu-title {
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .ant-menu-item:hover,
+    .ant-menu-submenu-title:hover {
+        background: #5b21b6 !important;
+    }
+
+    .ant-menu-item-selected {
+        background: #7c3aed !important;
+        font-weight: 600;
+    }
+
+
+    .admin-header {
+        background: #ffffff;
+        font-size: 18px;
+        font-weight: 600;
+        color: #4c1d95;
+        box-shadow: 0 2px 8px rgba(76, 29, 149, 0.15);
+    }
+
+    .admin-content-wrapper {
+        margin: 16px;
+    }
+
+    .admin-content-box {
+        padding: 24px;
+        min-height: 360px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(76, 29, 149, 0.08);
+    }
+
+    .ant-layout-sider-trigger {
+        background: transparent !important;
+    }
+}
+
+
+.admin-layout {
+
+    .admin-sider {
+        position: relative;
+        transition: width 0.2s ease;
+    }
+
+    .resize-handle {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 6px;
+        height: 100%;
+        cursor: col-resize;
+        z-index: 10;
+        background: transparent;
+        transition: all 0.2s ease;
+    }
+
+    .resize-handle:hover {
+        background: rgba(255, 255, 255, 0.35);
+    }
+
+}

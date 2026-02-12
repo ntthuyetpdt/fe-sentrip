@@ -13,7 +13,7 @@ import MainLayoutAdmin from "../admin/layout";
 
 const Home = lazy(() => import("../page/QuanLiDonHang/index"));
 const DetailsVe = lazy(() => import("../page/DetailsVe/index"));
-const QuanLiNhanVien = lazy(() => import("../admin/page/quanLiNhanVien"));
+const QuanLiNhanVien = lazy(() => import("../admin/page/taiKhoanVaPhanQuyen"));
 export interface AppRoute {
   name: string;
   path: string;
@@ -88,7 +88,7 @@ const routes = [
     icon: null,
   },
   {
-    name: "Chi tiết vé",
+    name: null,
     path: BaseUrl.QuanLiNhanVien,
     component: QuanLiNhanVien,
     layout: MainLayoutAdmin,

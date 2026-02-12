@@ -1,7 +1,11 @@
 const BaseUrl = {
+  //user
   Home: `/`,
   DetailVe: `details`,
-  QuanLiNhanVien: `/QuanLiNhanVien`,
+
+
+  //admin
+  QuanLiNhanVien: `/admin/tai-khoan-va-phan-quyen`,
   
 };
 export default BaseUrl;
