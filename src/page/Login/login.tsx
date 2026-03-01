@@ -1,27 +1,68 @@
 import React, { useState } from "react";
 import ButtonCustom from "../../components/custom/button";
-import { useTranslation } from "react-i18next"
+import { useTranslation } from "react-i18next";
+import { message } from "antd";
+import { authLogin } from "../../api/auth";
+import { useNavigate } from "react-router-dom";
+import { getProfile } from "../../api/api";
+
 interface LoginProps {
-  onClose: () => void;
+  onClose?: () => void;
   onRegister?: () => void;
+  router?: string;
 }
 
-const Login: React.FC<LoginProps> = ({ onClose, onRegister }) => {
-  const [username, setUsername] = useState("");
+const Login: React.FC<LoginProps> = ({ onRegister, router }) => {
+  const [gmail, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { t, i18n } = useTranslation();
-  const handleLogin = () => {
-    if (!username || !password) return;
+  const { t } = useTranslation();
+  const navigate = useNavigate();
 
-    setLoading(true);
-    localStorage.setItem("token", "abc");
+  const handleLogin = async () => {
+    if (!gmail || !password) {
+      message.warning("Please enter email and password");
+      return;
+    }
 
-    setTimeout(() => {
-      console.log("Login:", { username, password });
+    try {
+      setLoading(true);
+      const loginRes = await authLogin({
+        gmail,
+        password,
+      });
+
+      if (loginRes.satus !== 200) {
+        message.error(loginRes.message || "Login failed");
+        return;
+      }
+
+      const token = loginRes.data.token;
+      localStorage.setItem("access_token", token);
+
+      const profileRes = await getProfile();
+
+      if (profileRes.satus === 200) {
+        localStorage.setItem(
+          "user_profile",
+          JSON.stringify(profileRes.data)
+        );
+      }
+      message.success("Login success");
+      if (router) {
+        navigate(`/admin`);
+      } else {
+        window.location.href = "/"
+      }
+
+
+    } catch (error: any) {
+      message.error(
+        error?.response?.data?.message || "Login failed"
+      );
+    } finally {
       setLoading(false);
-      onClose();
-    }, 1000);
+    }
   };
 
   return (
@@ -32,7 +73,7 @@ const Login: React.FC<LoginProps> = ({ onClose, onRegister }) => {
         <input
           type="email"
           placeholder={t("Email") as string}
-          value={username}
+          value={gmail}
           onChange={(e) => setUsername(e.target.value)}
         />
       </div>

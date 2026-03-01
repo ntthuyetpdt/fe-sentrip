@@ -1,13 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
   HomeOutlined,
-  ShopOutlined,
-  AppstoreOutlined,
-  ShoppingCartOutlined,
-  FileTextOutlined,
-  BarChartOutlined,
-  
-  StarOutlined,
+  UserAddOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
@@ -70,52 +64,30 @@ const AdminLayout = ({
   };
 
   const menuMap: Record<string, string> = {
-    // dashboard: "/admin/tong-quan",
-    // merchant: "/admin/merchant",
-    // service: "/admin/dich-vu",
-    // serviceOpen: "/admin/dich-vu-mo-ban",
-    // orderList: "/admin/don-hang/danh-sach",
-    // sellerPayment: "/admin/don-hang/thanh-toan-nha-ban",
-    // customerPayment: "/admin/don-hang/thanh-toan-khach-hang",
-    // invoice: "/admin/hoa-don",
-    // report: "/admin/bao-cao",
+    admin: "/admin",
     account: "/admin/tai-khoan-va-phan-quyen",
-    // review: "/admin/danh-gia",
+    addAccount: "/admin/them-tai-khoan",
   };
 
   const menuItems: MenuItem[] = [
-    // { key: "dashboard", icon: <HomeOutlined />, label: "Tổng quan" },
-    // { key: "merchant", icon: <ShopOutlined />, label: "Quản lý merchant" },
-    // { key: "service", icon: <AppstoreOutlined />, label: "Quản lý dịch vụ" },
-    // {
-    //   key: "serviceOpen",
-    //   icon: <AppstoreOutlined />,
-    //   label: "Quản lý dịch vụ mở bán",
-    // },
-    // {
-    //   key: "order",
-    //   icon: <ShoppingCartOutlined />,
-    //   label: "Quản lý đơn hàng",
-    //   children: [
-    //     { key: "orderList", label: "Danh sách đơn hàng" },
-    //     { key: "sellerPayment", label: "Thanh toán nhà bán" },
-    //     { key: "customerPayment", label: "Thanh toán khách hàng" },
-    //   ],
-    // },
-    // { key: "invoice", icon: <FileTextOutlined />, label: "Quản lý hóa đơn" },
-    // { key: "report", icon: <BarChartOutlined />, label: "Báo cáo & đối soát" },
+    { key: "admin", icon: <HomeOutlined />, label: "Trang chủ" },
     {
       key: "account",
-      icon: < UserOutlined/>,
+      icon: < UserOutlined />,
       label: "Tài khoản và phân quyền",
     },
-    // { key: "review", icon: <StarOutlined />, label: "Quản lý đánh giá" },
+    {
+      key: "addAccount",
+      icon: < UserAddOutlined />,
+      label: "Thêm tài khoản",
+    },
   ];
 
   const selectedKey =
-    Object.keys(menuMap).find((key) =>
-      location.pathname.startsWith(menuMap[key])
-    ) || "dashboard";
+    Object.entries(menuMap)
+      .sort((a, b) => b[1].length - a[1].length)
+      .find(([_, path]) => location.pathname.startsWith(path))
+    ?.[0] || "admin";
 
   return (
     <Layout className="admin-layout">
@@ -139,7 +111,6 @@ const AdminLayout = ({
           onClick={({ key }) => navigate(menuMap[key as string])}
         />
 
-        {/* 👉 Thanh resize */}
         {!collapsed && (
           <div
             className="resize-handle"

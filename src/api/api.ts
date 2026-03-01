@@ -10,56 +10,42 @@ export async function getHanoiTemperature(): Promise<number> {
   return tempC;
 }
 
+export const getProfile = async () => {
+  const res = await axiosInstance.get("/user/profile");
+  return res.data;
+};
+
+export const AddAccount = async (body: any) => {
+  const res = await axiosInstance.post(`/user/create`, body);
+  return res.data;
+};
 
 
-// export const dataTrending = async (body: any) => {
-//   const res = await axiosInstance.post(`/api/search/post`, body);
-//   return res.data;
-// };
 
 
-// export const getTopic = async () => {
-//   const res = await axiosInstance.get("/api/posts/options");
-//   return res.data;
-// };
+export const getEmployee = async () => {
+  const res = await axiosInstance.get("/employee/getAll");
+  return res.data;
+};
 
+export const createEmployee = async ( body: any) => {
+  return axiosInstance.post(`/employee/create`, body);
+};
 
-// export const creatPost = async (
-//   body: Record<string, any>,
-//   accessToken: string
-// ) => {
-//   const formData = new FormData();
+export const searchEmployee = async (params: any) => {
+  const res = await axiosInstance.get("/employee/search", {
+    params,
+  });
+  return res.data;
+};
 
-//   Object.keys(body).forEach((key) => {
-//     if (body[key] !== undefined && body[key] !== null) {
-//       formData.append(key, body[key]);
-//     }
-//   });
+export const editEmployee = async (id: number, body: any) => {
+  return axiosInstance.post(`/employee/update/${id}`, body);
+};
 
-//   const res = await axiosInstance.post(
-//     "/api/create/post",
-//     formData,
-//     {
-//       headers: {
-//         Authorization: `Bearer ${accessToken}`,
-//         "Content-Type": "multipart/form-data",
-//       },
-//     }
-//   );
-
-//   return res.data;
-// };
-
-// export const deletePost = async (id: string, token: string) => {
-//   const res = await axiosInstance.post(
-//     `/api/delete/post/${id}`,
-//     {},
-//     {
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//       },
-//     }
-//   );
-//   return res.data;
-// };
-
+export const deleteEmployee = async (id: number) => {
+  const res = await axiosInstance.delete(
+    `/employee/delete/${id}`
+  );
+  return res.data;
+};

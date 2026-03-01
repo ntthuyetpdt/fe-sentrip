@@ -18,7 +18,7 @@ const HeaderCustom = () => {
     const [temp, setTemp] = useState<number | null>(null);
     const { t, i18n } = useTranslation();
     const [avatar, setAvatar] = useState("https://kenh14cdn.com/2017/3235-1500365611879.jpg");
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("access_token");
     const [isOpenLogin, setIsOpenLogin] = useState(false);
     const [isOpenRegister, setIsOpenRegister] = useState(false);
     const [isOpenUserDropdown, setIsOpenUserDropdown] = useState(false);

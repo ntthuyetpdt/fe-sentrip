@@ -11,9 +11,12 @@ import BaseUrl from "./path";
 import MainLayout from "../components/layout/mainLayout";
 import MainLayoutAdmin from "../admin/layout";
 
+const Login = lazy(() => import("../page/Login/index"));
 const Home = lazy(() => import("../page/QuanLiDonHang/index"));
 const DetailsVe = lazy(() => import("../page/DetailsVe/index"));
+const HomeAdmin = lazy(() => import("../admin/page/home"));
 const QuanLiNhanVien = lazy(() => import("../admin/page/taiKhoanVaPhanQuyen"));
+const AddAccount = lazy(() => import("../admin/page/addAcc"));
 export interface AppRoute {
   name: string;
   path: string;
@@ -89,11 +92,38 @@ const routes = [
   },
   {
     name: null,
+    path: BaseUrl.Login,
+    component: Login,
+    layout: null,
+    showInMenu: false,
+    private: false,
+    icon: null,
+  },
+  {
+    name: null,
     path: BaseUrl.QuanLiNhanVien,
     component: QuanLiNhanVien,
     layout: MainLayoutAdmin,
     showInMenu: false,
-    private: false,
+    private: true,
+    icon: null,
+  },
+  {
+    name: null,
+    path: BaseUrl.HomeAdmin,
+    component: HomeAdmin,
+    layout: MainLayoutAdmin,
+    showInMenu: false,
+    private: true,
+    icon: null,
+  },
+  {
+    name: null,
+    path: BaseUrl.AddAccount,
+    component: AddAccount,
+    layout: MainLayoutAdmin,
+    showInMenu: false,
+    private: true,
     icon: null,
   },
 ];
