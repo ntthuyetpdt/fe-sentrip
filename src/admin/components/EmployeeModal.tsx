@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import ModalCustom from "../../components/custom/modal";
 import CommonInput from "../../components/custom/input";
 import ButtonCustom from "../../components/custom/button";
+import CommonSelect from "../../components/custom/select";
 
 export interface Employee {
   JoinDate: string;
@@ -80,8 +81,8 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({
         {mode === "view"
           ? "Xem nhân viên"
           : mode === "edit"
-          ? "Chỉnh sửa nhân viên"
-          : "Thêm nhân viên"}
+            ? "Chỉnh sửa nhân viên"
+            : "Thêm nhân viên"}
       </h2>
 
       <Form layout="vertical" form={form}>
@@ -90,7 +91,7 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({
             <Form.Item
               label="Mã NV"
               name="mnv"
-              rules={[{ required: true, message: "Nhập mã nhân viên" }]}
+              rules={[{ required: false, message: "Nhập mã nhân viên" }]}
             >
               <CommonInput disabled={isView} />
             </Form.Item>
@@ -100,19 +101,37 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({
             <Form.Item
               label="Họ tên"
               name="fullName"
-              rules={[{ required: true, message: "Nhập họ tên" }]}
+              rules={[{ required: false, message: "Nhập họ tên" }]}
             >
               <CommonInput disabled={isView} />
             </Form.Item>
           </Col>
-
+          <Col span={12}>
+            <Form.Item
+              label="Chức vụ"
+              name="Role"
+              rules={[{ required: false, message: "Nhập chức vụ" }]}
+            >
+              <CommonSelect
+                disabled={isView}
+                placeholder="Chọn chức vụ"
+                options={[
+                  { label: "ADMIN", value: "ADMIN" },
+                  { label: "EMPLOYEE", value: "EMPLOYEE" },
+                  { label: "ACCOUNTANT", value: "ACCOUNTANT" },
+                  { label: "CUSTOMER", value: "CUSTOMER" },
+                  { label: "SUPPLIER", value: "SUPPLIER" },
+                ]}
+              />
+            </Form.Item>
+          </Col>
           <Col span={12}>
             <Form.Item
               label="Giới tính"
               name="gender"
-              rules={[{ required: true, message: "Chọn giới tính" }]}
+              rules={[{ required: false, message: "Chọn giới tính" }]}
             >
-              <Select disabled={isView}>
+              <Select disabled>
                 <Select.Option value="Nam">Nam</Select.Option>
                 <Select.Option value="Nữ">Nữ</Select.Option>
               </Select>
@@ -124,14 +143,14 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({
               label="SĐT"
               name="phone"
               rules={[
-                { required: true, message: "Nhập số điện thoại" },
+                { required: false, message: "Nhập số điện thoại" },
                 {
                   pattern: /^(0|\+84)[0-9]{9}$/,
                   message: "SĐT không hợp lệ",
                 },
               ]}
             >
-              <CommonInput disabled={isView} />
+              <CommonInput disabled />
             </Form.Item>
           </Col>
 
@@ -140,24 +159,14 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({
               label="CCCD"
               name="cccd"
               rules={[
-                { required: true, message: "Nhập CCCD" },
+                { required: false, message: "Nhập CCCD" },
                 {
                   pattern: /^[0-9]{12}$/,
                   message: "CCCD phải gồm 12 số",
                 },
               ]}
             >
-              <CommonInput disabled={isView} />
-            </Form.Item>
-          </Col>
-
-          <Col span={12}>
-            <Form.Item
-              label="Chức vụ"
-              name="Role"
-              rules={[{ required: true, message: "Nhập chức vụ" }]}
-            >
-              <CommonInput disabled={isView} />
+              <CommonInput disabled />
             </Form.Item>
           </Col>
 
@@ -165,9 +174,9 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({
             <Form.Item
               label="Địa chỉ"
               name="address"
-              rules={[{ required: true, message: "Nhập địa chỉ" }]}
+              rules={[{ required: false, message: "Nhập địa chỉ" }]}
             >
-              <CommonInput disabled={isView} />
+              <CommonInput disabled />
             </Form.Item>
           </Col>
 
@@ -175,9 +184,9 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({
             <Form.Item
               label="Ngân hàng"
               name="bankName"
-              rules={[{ required: true, message: "Nhập tên ngân hàng" }]}
+              rules={[{ required: false, message: "Nhập tên ngân hàng" }]}
             >
-              <CommonInput disabled={isView} />
+              <CommonInput disabled />
             </Form.Item>
           </Col>
 
@@ -186,14 +195,14 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({
               label="Số tài khoản"
               name="accountBank"
               rules={[
-                { required: true, message: "Nhập số tài khoản" },
+                { required: false, message: "Nhập số tài khoản" },
                 {
                   pattern: /^[0-9]+$/,
                   message: "Chỉ được nhập số",
                 },
               ]}
             >
-              <CommonInput disabled={isView} />
+              <CommonInput disabled />
             </Form.Item>
           </Col>
 
@@ -201,11 +210,11 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({
             <Form.Item
               label="Ngày vào làm"
               name="JoinDate"
-              rules={[{ required: true, message: "Chọn ngày vào làm" }]}
+              rules={[{ required: false, message: "Chọn ngày vào làm" }]}
             >
               <DatePicker
                 style={{ width: "100%" }}
-                disabled={isView}
+                disabled
                 format="DD/MM/YYYY"
               />
             </Form.Item>

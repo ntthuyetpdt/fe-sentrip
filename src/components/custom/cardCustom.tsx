@@ -1,107 +1,177 @@
-import { ScheduleOutlined, UserOutlined } from "@ant-design/icons";
+import { ScheduleOutlined } from "@ant-design/icons";
 import ButtonCustom from "../../components/custom/button";
 
 export type OrderStatus =
-  | "pending"
-  | "waiting_invoice"
-  | "confirmed"
-  | "invoiced"
-  | "cancel";
-
-type OrderCardProps = {
-  image: string;
-  title: string;
-  type: string; // Ví dụ: Vé
-  date: string;
-  quantity: number;
-  description: string;
-  extraService?: string;
-  status: OrderStatus;
-  orderCode: string;
-  totalPrice: string;
-  onCancel?: () => void;
-  onPay?: () => void;
-};
+  | "PENDING"
+  | "PENDING_PAYMENT"
+  | "CONFIRM"
+  | "PAID"
+  | "COMPLETED"
+  | "CANCELLED"
+  | "REFUND_REQUESTED"
+  | "REFUNDED";
 
 const STATUS_LABEL: Record<OrderStatus, string> = {
-  pending: "Chờ xác nhận",
-  waiting_invoice: "Chờ xuất hoá đơn",
-  confirmed: "Đã xác nhận",
-  invoiced: "Đã xuất hoá đơn",
-  cancel: "Đã huỷ",
+  PENDING: "Chờ xác nhận",
+  PENDING_PAYMENT: "Chờ thanh toán",
+  CONFIRM: "Đã xác nhận",
+  PAID: "Đã thanh toán",
+  COMPLETED: "Hoàn thành",
+  CANCELLED: "Đã hủy",
+  REFUND_REQUESTED: "Yêu cầu hoàn vé",
+  REFUNDED: "Đã hoàn tiền",
+};
+
+type OrderCardProps = {
+  id?: number;
+  img?: string | null;
+  productName?: string;
+  serviceType?: string;
+  createdAt?: string;
+  Type?: string;
+  price?: number | string;
+  refundable?: number;
+  status?: OrderStatus;
+  viewProduct?: boolean;
+  viewCart?: boolean;
+  additionalService?: string;
+  orderCode?: string;
+  quantities?: number | string;
+  onCancel?: () => void;
+  onPay?: () => void;
+  onOrder?: (id: number) => void;
 };
 
 const OrderCard = ({
-  image,
-  title,
-  type,
-  date,
-  quantity,
-  description,
-  extraService,
+  id,
+  img,
+  productName,
+  serviceType,
+  createdAt,
+  Type,
+  price,
+  refundable,
   status,
+  additionalService,
+  quantities,
+  viewProduct = false,
+  viewCart = false,
   orderCode,
-  totalPrice,
   onCancel,
   onPay,
+  onOrder,
 }: OrderCardProps) => {
   return (
     <div className="order-card">
-
-      <div className="order-left">
-        <img src={image} alt={title} />
-      </div>
+      {img && (
+        <div className="order-left">
+          <img src={img} alt={productName || "product"} />
+        </div>
+      )}
 
       <div className="order-center">
-        <h4>{title}</h4>
+        {productName && <h4>{productName}</h4>}
 
-        <span className="tag">{type}</span>
+        {serviceType && <span className="tag">{serviceType}</span>}
 
-        <div className="meta">
-          <span><ScheduleOutlined/> {date}</span>
-          <span><UserOutlined/> {quantity}</span>
-        </div>
+        {createdAt && (
+          <div className="meta">
+            <span>
+              <ScheduleOutlined />{" "}
+              {new Date(createdAt).toLocaleDateString("vi-VN")}
+            </span>
+          </div>
+        )}
 
-        <p className="desc">{description}</p>
+        {Type && <p className="desc">{Type}</p>}
 
-        {extraService && (
+        {additionalService && (
+          <p className="desc">
+            Dịch vụ đi kèm: {additionalService}
+          </p>
+        )}
+
+        {refundable !== undefined && (
           <p className="extra">
-            <strong>Dịch vụ đi kèm:</strong> {extraService}
+            <span>Hoàn huỷ: </span>
+            {refundable === 0
+              ? "Có thể hoàn tiền"
+              : "Không hỗ trợ hoàn tiền"}
           </p>
         )}
       </div>
 
-
       <div className="order-right">
-        <div className="top">
-          <span className={`status ${status}`}>
-            {STATUS_LABEL[status]}
-          </span>
+        {!viewProduct && status && (
+          <div className="top">
+            <span className={`status-${status}`}>
+              {STATUS_LABEL[status]}
+            </span>
 
-          <span className="code">MĐH : {orderCode}</span>
-        </div>
+            {orderCode && (
+              <span className="code">
+                MĐH: {orderCode}
+              </span>
+            )}
+          </div>
+        )}
 
-        <div className="price">
-          <span>Tổng thanh toán</span>
-          <strong>{totalPrice}</strong>
-        </div>
+        {(price || quantities) && (
+          <div className="price">
+            {quantities && (
+              <span>Số lượng: {quantities}</span>
+            )}
+            <br />
+            {price && (
+              <>
+                <span>Tổng thanh toán:</span>
+                <strong>
+                  {Number(price).toLocaleString("vi-VN")} đ
+                </strong>
+              </>
+            )}
+          </div>
+        )}
 
         <div className="actions">
-          {status !== "cancel" && status !== "confirmed" && status !== "invoiced" && (
+          {viewCart && (
             <ButtonCustom
-              className="btn-cancel"
-              text="Hủy đơn hàng"
-              onClick={onCancel}
+              className="btn-pay"
+              text="Chỉnh sửa"
+              onClick={onPay}
             />
+          )
+          }
+          {viewProduct && (
+            id && (
+              <ButtonCustom
+                className="btn-pay"
+                text="Đặt hàng"
+                onClick={() => onOrder?.(id)}
+              />
+            )
           )}
 
-          {status !== "cancel" && status !== "invoiced" && (
+          {!viewProduct && status === "PENDING" && (
             <ButtonCustom
               className="btn-pay"
               text="Thanh toán"
               onClick={onPay}
             />
           )}
+
+          {!viewProduct && status === "CONFIRM" && null}
+
+          {!viewProduct && status === "PAID" && null}
+
+          {!viewProduct && status === "COMPLETED" && null}
+
+          {!viewProduct && status === "CANCELLED" && null}
+
+          {!viewProduct && status === "REFUND_REQUESTED" && null}
+
+          {!viewProduct && status === "REFUNDED" && null}
+
         </div>
       </div>
     </div>

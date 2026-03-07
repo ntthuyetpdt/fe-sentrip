@@ -5,8 +5,15 @@
   background: #fff;
   border: 1px solid #e5e7eb;
   border-radius: 14px;
+  transition: 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 1px 7px rgba(0, 0, 0, 0.06);
+  }
 
   .order-left {
+    min-width: 140px;
+
     img {
       width: 140px;
       height: 100%;
@@ -48,6 +55,11 @@
     .desc {
       font-size: 14px;
       color: #374151;
+
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
 
     .extra {
@@ -61,12 +73,12 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    text-align: right;
 
     .top {
       display: flex;
-      gap: 10px;
+      justify-content: space-between;
       align-items: center;
+      gap: 10px;
     }
 
     .code {
@@ -75,10 +87,12 @@
       padding: 6px 12px;
       border-radius: 999px;
       background-color: #f5f5f5;
+      white-space: nowrap;
     }
 
     .price {
       margin-top: 8px;
+      text-align: right;
 
       span {
         font-size: 13px;
@@ -89,7 +103,7 @@
         display: block;
         font-size: 18px;
         font-weight: 700;
-        color: #4C1D95;
+        color: #4c1d95;
       }
     }
 
@@ -98,16 +112,27 @@
       justify-content: flex-end;
       gap: 10px;
       margin-top: 10px;
+
       .btn-cancel {
         background: #fff;
         border: 1px solid #d1d5db;
         color: #ef4444;
+        transition: 0.2s ease;
+
+        &:hover {
+          background: #fee2e2;
+        }
       }
 
       .btn-pay {
-        background: #4C1D95;
+        background: #4c1d95;
         color: #fff;
-        border: 1px solid #4C1D95;
+        border: 1px solid #4c1d95;
+        transition: 0.2s ease;
+
+        &:hover {
+          opacity: 0.9;
+        }
       }
     }
   }
@@ -120,25 +145,70 @@
   font-size: 13px;
   font-weight: 500;
   white-space: nowrap;
-
-  &.pending,
-  &.waiting_invoice {
-    background: #fff7ed;
-    color: #f59e0b;
-  }
-
-  &.confirmed,
-  &.invoiced {
-    background: #ecfdf5;
-    color: #10b981;
-  }
-
-  &.cancel {
-    background: #fef2f2;
-    color: #ef4444;
-  }
 }
 
+.status-PENDING {
+  background: #fff7ed;
+  color: #f59e0b;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 14px;
+}
+
+.status-PENDING_PAYMENT {
+  background: #fef3c7;
+  color: #d97706;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 14px;
+}
+
+.status-CONFIRM {
+  background: #e0f2fe;
+  color: #0284c7;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 14px;
+}
+
+.status-PAID {
+  background: #ecfdf5;
+  color: #10b981;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 14px;
+}
+
+.status-COMPLETED {
+  background: #dcfce7;
+  color: #16a34a;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 14px;
+}
+
+.status-CANCELLED {
+  background: #fef2f2;
+  color: #ef4444;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 14px;
+}
+
+.status-REFUND_REQUESTED {
+  background: #f3e8ff;
+  color: #9333ea;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 14px;
+}
+
+.status-REFUNDED {
+  background: #e5e7eb;
+  color: #374151;
+  padding: 5px 10px;
+  border-radius: 10px;
+}
 
 @media (max-width: 768px) {
   .order-card {
@@ -153,9 +223,23 @@
       min-width: unset;
       text-align: left;
 
+      .top {
+        justify-content: space-between;
+      }
+
+      .price {
+        text-align: left;
+      }
+
       .actions {
         justify-content: space-between;
+
+        .btn-cancel,
+        .btn-pay {
+          flex: 1;
+        }
       }
     }
   }
 }
+

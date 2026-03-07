@@ -1,80 +1,102 @@
 import React, { useState } from "react";
 import ButtonCustom from "../../components/custom/button";
-import { useTranslation } from "react-i18next"
+import { useTranslation } from "react-i18next";
+import { authRegister } from "../../api/auth";
+import { message } from "antd";
+
 interface RegisterProps {
-    onRegisterSuccess: () => void;
-    onBackToLogin?: () => void;
+  onRegisterSuccess: () => void;
+  onBackToLogin?: () => void;
 }
 
 const Register: React.FC<RegisterProps> = ({
-    onRegisterSuccess,
-    onBackToLogin,
+  onRegisterSuccess,
+  onBackToLogin,
 }) => {
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [loading, setLoading] = useState(false);
-    const { t, i18n } = useTranslation();
-    const handleRegister = () => {
-        if (!username || !password || !confirmPassword) return;
-        if (password !== confirmPassword) return;
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-        setLoading(true);
+  const { t } = useTranslation();
 
-        setTimeout(() => {
-            console.log("Register:", { username, password });
+  const handleRegister = async () => {
+    if (!username || !password || !confirmPassword) {
+      message.warning("Vui lòng nhập đầy đủ thông tin");
+      return;
+    }
 
-            setLoading(false);
-            onRegisterSuccess();
-        }, 1000);
-    };
+    if (password !== confirmPassword) {
+      message.warning("Mật khẩu không khớp");
+      return;
+    }
 
-    return (
-        <div className="auth auth--register">
-            <h2 className="auth__title">{t("Register")}</h2>
+    try {
+      setLoading(true);
 
-            <div className="auth__field">
-                <input
-                    type="email"
-                    placeholder={t("Email") as string}
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                />
-            </div>
+      const body = {
+        gmail: username,  
+        password: password,
+      };
 
-            <div className="auth__field">
-                <input
-                    type="password"
-                    placeholder={t("PassWord") as string}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-            </div>
+      const res = await authRegister(body);
 
-            <div className="auth__field">
-                <input
-                    type="password"
-                    placeholder={t("Confirm password") as string}
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                />
-            </div>
+      message.success("Đăng kí thành công")
 
-            <ButtonCustom
-                text= {t("Register")}
-                onClick={handleRegister}
-                disabled={loading}
-                className="auth__btn"
-            />
+      onRegisterSuccess();
+    } catch (error: any) {
+      message.warning(error?.response?.data?.message || "Đăng ký thất bại");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            <div className="auth__footer">
-                <span>{t("Already have an account?")}</span>
-                <span className="auth__link" onClick={onBackToLogin}>
-                    {t("Login")}
-                </span>
-            </div>
-        </div>
-    );
+  return (
+    <div className="auth auth--register">
+      <h2 className="auth__title">{t("Register")}</h2>
+
+      <div className="auth__field">
+        <input
+          type="email"
+          placeholder={t("Email") as string}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+      </div>
+
+      <div className="auth__field">
+        <input
+          type="password"
+          placeholder={t("PassWord") as string}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      </div>
+
+      <div className="auth__field">
+        <input
+          type="password"
+          placeholder={t("Confirm password") as string}
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+        />
+      </div>
+
+      <ButtonCustom
+        text={loading ? "Loading..." : (t("Register") as string)}
+        onClick={handleRegister}
+        disabled={loading}
+        className="auth__btn"
+      />
+
+      <div className="auth__footer">
+        <span>{t("Already have an account?")}</span>
+        <span className="auth__link" onClick={onBackToLogin}>
+          {t("Login")}
+        </span>
+      </div>
+    </div>
+  );
 };
 
 export default Register;

@@ -1,0 +1,121 @@
+.modal-order {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.product-name {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.modal-middle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.price {
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+}
+
+.quantity-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  button {
+    width: 34px;
+    height: 34px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    background: #fff;
+    cursor: pointer;
+    font-size: 18px;
+    transition: 0.2s;
+
+    &:hover {
+      background: #f5f5f5;
+    }
+  }
+
+  span {
+    min-width: 30px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 16px;
+  }
+}
+
+.total {
+  font-size: 18px;
+  font-weight: 600;
+  color: #e53935;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+
+  button {
+    flex: 1;
+  }
+}
+
+.search-QLDH-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search-QLDH-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search-input-product {
+  flex: 1;
+  height: 40px;
+  padding: 0 12px;
+  border: 2px solid #d1d5db;
+  border-radius: 999px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.search-input-product:focus {
+  border-color: #4C1D95;
+}
+
+.search-input-address {
+  flex: 1;
+  height: 40px;
+  padding: 0 12px;
+  border: 2px solid #d1d5db;
+  border-radius: 999px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.search-input-address:focus {
+  border-color: #4C1D95;
+}
+
+.btn-search-QLDH {
+  height: 40px;
+  width: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

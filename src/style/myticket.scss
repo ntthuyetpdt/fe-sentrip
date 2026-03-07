@@ -1,0 +1,232 @@
+.cart-page {
+  padding: 12px 24px;
+  max-width: 1140px;
+  margin: auto;
+
+  @media screen and (max-width: 758px) {
+    padding: 12px;
+
+    .pdDetail {
+      padding: 5px 10px !important;
+    }
+  }
+
+  .cart-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .cart-header {
+    h3 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #4C1D95;
+      margin: 0;
+    }
+  }
+
+  .cart-body {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 0px;
+    &.empty-ticket {
+      display: flex;
+      justify-content: center;
+      padding: 40px 0;
+    }
+  }
+
+  .cart-item {
+    width: 100%;
+  }
+
+  .pdDetail {
+    padding: 20px;
+  }
+
+  .details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f0f0f0;
+
+    @media screen and (max-width: 758px) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .page-title {
+      font-size: 22px;
+      font-weight: 600;
+      color: #4C1D95;
+      margin: 0;
+    }
+  }
+
+  .details-section {
+    margin-bottom: 24px;
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+
+      .anticon {
+        font-size: 18px;
+        color: #4C1D95;
+      }
+
+      h4 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+        color: #4C1D95;
+      }
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+
+      .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        padding: 14px;
+        background: #fafafa;
+        border-radius: 8px;
+
+        .label {
+          font-size: 14px;
+          color: #666;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+
+        .value {
+          font-size: 15px;
+          font-weight: 500;
+          color: #333;
+        }
+      }
+    }
+  }
+
+  .ticket-card {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+
+    .ticket-image-container {
+      position: relative;
+      flex-shrink: 0;
+
+      .ticket-image {
+        width: 260px;
+        height: 170px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 2px solid #fff;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+
+        @media (max-width: 768px) {
+          width: 100%;
+          height: auto;
+        }
+      }
+
+      .ant-tag {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+      }
+    }
+
+    .ticket-content {
+      flex: 1;
+
+      .ticket-name {
+        font-size: 22px;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 12px;
+      }
+
+      .ticket-details {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+
+        @media (max-width: 576px) {
+          grid-template-columns: 1fr;
+        }
+
+        .detail-row {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 10px;
+          background: white;
+          border-radius: 6px;
+          border: 1px solid #f0f0f0;
+          font-size: 14px;
+        }
+      }
+    }
+  }
+
+  .payment-breakdown {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    padding: 20px;
+
+    .breakdown-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px dashed #f0f0f0;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      span {
+        font-size: 15px;
+        color: #666;
+      }
+
+      &.total {
+        margin-top: 10px;
+        padding-top: 16px;
+        border-top: 1px solid #f0f0f0;
+
+        span {
+          font-size: 16px;
+          color: #333;
+        }
+
+        .total-amount {
+          font-size: 20px;
+          color: #ff4d4f;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}

@@ -3,6 +3,7 @@ import {
   HomeOutlined,
   UserAddOutlined,
   UserOutlined,
+  ShoppingCartOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { Breadcrumb, Layout, Menu, theme } from "antd";
@@ -18,10 +19,7 @@ interface AdminLayoutProps {
   breadcrumb?: { title: string }[];
 }
 
-const AdminLayout = ({
-  children,
-  breadcrumb = [],
-}: AdminLayoutProps) => {
+const AdminLayout = ({ children, breadcrumb = [] }: AdminLayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -63,31 +61,118 @@ const AdminLayout = ({
     document.addEventListener("mouseup", onMouseUp);
   };
 
-  const menuMap: Record<string, string> = {
-    admin: "/admin",
-    account: "/admin/tai-khoan-va-phan-quyen",
-    addAccount: "/admin/them-tai-khoan",
-  };
+  /**
+   * ========================
+   * GET ROLE FROM PROFILE
+   * ========================
+   */
 
-  const menuItems: MenuItem[] = [
-    { key: "admin", icon: <HomeOutlined />, label: "Trang chủ" },
+  const userProfile = JSON.parse(localStorage.getItem("user_profile") || "{}");
+  const role = userProfile?.role;
+
+  /**
+   * ========================
+   * MENU CONFIG
+   * ========================
+   */
+
+  const adminMenu: MenuItem[] = [
+    { key: "admin", icon: <HomeOutlined />, label: "Trang ADMIN" },
     {
       key: "account",
-      icon: < UserOutlined />,
+      icon: <UserOutlined />,
       label: "Tài khoản và phân quyền",
     },
     {
       key: "addAccount",
-      icon: < UserAddOutlined />,
+      icon: <UserAddOutlined />,
       label: "Thêm tài khoản",
     },
   ];
+
+  const employeeMenu: MenuItem[] = [
+    { key: "admin", icon: <HomeOutlined />, label: "Trang nhân viên" },
+    {
+      key: "customer",
+      icon: <UserOutlined />,
+      label: "Danh sách khách hàng",
+    },
+  ];
+
+  const supplierMenu: MenuItem[] = [
+    { key: "admin", icon: <HomeOutlined />, label: "Trang nhà cung cấp" },
+    {
+      key: "orders",
+      icon: <ShoppingCartOutlined />,
+      label: "Quản lý đơn hàng",
+    },
+  ];
+
+  const accountantMenu: MenuItem[] = [
+    { key: "admin", icon: <HomeOutlined />, label: "Trang kế toán" },
+    {
+      key: "payments",
+      icon: <ShoppingCartOutlined />,
+      label: "Quản lý thanh toán",
+    },
+  ];
+
+  /**
+   * ========================
+   * MENU MAP ROUTE
+   * ========================
+   */
+
+  const menuMap: Record<string, string> = {
+    admin: "/admin",
+    account: "/admin/tai-khoan-va-phan-quyen",
+    addAccount: "/admin/them-tai-khoan",
+    customer: "/admin/khach-hang",
+    orders: "/admin/don-hang",
+    payments: "/admin/thanh-toan",
+  };
+
+  /**
+   * ========================
+   * MENU BY ROLE
+   * ========================
+   */
+
+  const menuByRole: Record<string, MenuItem[]> = {
+    ADMIN: adminMenu,
+    EMPLOYEE: employeeMenu,
+    SUPPLIER: supplierMenu,
+    ACCOUNTANT: accountantMenu,
+  };
+
+  const menuItems = menuByRole[role] || [];
+
+  /**
+   * ========================
+   * SELECTED MENU
+   * ========================
+   */
 
   const selectedKey =
     Object.entries(menuMap)
       .sort((a, b) => b[1].length - a[1].length)
       .find(([_, path]) => location.pathname.startsWith(path))
-    ?.[0] || "admin";
+      ?.[0] || "admin";
+
+  /**
+   * ========================
+   * HEADER TITLE BY ROLE
+   * ========================
+   */
+
+  const headerTitleMap: Record<string, string> = {
+    ADMIN: "Admin Panel",
+    EMPLOYEE: "Nhân viên",
+    SUPPLIER: "Nhà cung cấp",
+    ACCOUNTANT: "Kế toán",
+  };
+
+  const headerTitle = headerTitleMap[role] || "Dashboard";
 
   return (
     <Layout className="admin-layout">
@@ -112,10 +197,7 @@ const AdminLayout = ({
         />
 
         {!collapsed && (
-          <div
-            className="resize-handle"
-            onMouseDown={handleMouseDown}
-          />
+          <div className="resize-handle" onMouseDown={handleMouseDown} />
         )}
       </Sider>
 
@@ -127,15 +209,12 @@ const AdminLayout = ({
             fontWeight: 600,
           }}
         >
-          Admin Panel
+          {headerTitle}
         </Header>
 
         <Content className="admin-content-wrapper">
           {breadcrumb.length > 0 && (
-            <Breadcrumb
-              style={{ margin: "16px 0" }}
-              items={breadcrumb}
-            />
+            <Breadcrumb style={{ margin: "16px 0" }} items={breadcrumb} />
           )}
 
           <div

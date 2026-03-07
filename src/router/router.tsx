@@ -2,21 +2,23 @@ import { lazy } from "react";
 import {
   HomeOutlined,
   FileTextOutlined,
-  HeartOutlined,
-  SettingOutlined,
-  StarOutlined,
-  CameraOutlined,
+  IdcardOutlined,
+  ShoppingCartOutlined,
 } from "@ant-design/icons";
 import BaseUrl from "./path";
 import MainLayout from "../components/layout/mainLayout";
 import MainLayoutAdmin from "../admin/layout";
 
 const Login = lazy(() => import("../page/Login/index"));
-const Home = lazy(() => import("../page/QuanLiDonHang/index"));
+const Home = lazy(() => import("../page/AllTicket/index"));
 const DetailsVe = lazy(() => import("../page/DetailsVe/index"));
 const HomeAdmin = lazy(() => import("../admin/page/home"));
 const QuanLiNhanVien = lazy(() => import("../admin/page/taiKhoanVaPhanQuyen"));
 const AddAccount = lazy(() => import("../admin/page/addAcc"));
+const Profile = lazy(() => import("../page/Profile/index"));
+const QuanLiDonHang = lazy(() => import("../page/QuanLiDonHang/index"));
+const MyTicket = lazy(() => import("../page/MyTicket/index"));
+const MyCart = lazy(() => import("../page/Cart/index"));
 export interface AppRoute {
   name: string;
   path: string;
@@ -28,7 +30,7 @@ export interface AppRoute {
 }
 const routes = [
   {
-    name: "Ưu đãi của tôi",
+    name: "Trang chủ",
     path: BaseUrl.Home,
     component: Home,
     layout: MainLayout,
@@ -38,53 +40,80 @@ const routes = [
   },
   {
     name: "Đơn hàng của tôi",
-    path: "/orders",
-    component: Home,
+    path: BaseUrl.Oder,
+    component: QuanLiDonHang,
     layout: MainLayout,
     showInMenu: true,
     private: false,
     icon: <FileTextOutlined />,
   },
   {
-    name: "Danh sách yêu thích",
-    path: "/favorite",
-    component: Home,
+    name: "Giỏ hàng của tôi",
+    path: BaseUrl.MyCart,
+    component: MyCart,
     layout: MainLayout,
     showInMenu: true,
     private: false,
-    icon: <HeartOutlined />,
+    icon: <ShoppingCartOutlined />,
   },
   {
-    name: "Cài đặt",
-    path: "/setting",
-    component: Home,
+    name: "Vé của tôi",
+    path: BaseUrl.MyTicket,
+    component: MyTicket,
     layout: MainLayout,
     showInMenu: true,
     private: false,
-    icon: <SettingOutlined />,
+    icon: <IdcardOutlined />,
   },
-  {
-    name: "Đánh giá dịch vụ",
-    path: "/rating",
-    component: Home,
-    layout: MainLayout,
-    showInMenu: true,
-    private: false,
-    icon: <StarOutlined />,
-  },
-  {
-    name: "Khoảnh khắc du lịch",
-    path: "/moment",
-    component: Home,
-    layout: MainLayout,
-    showInMenu: true,
-    private: false,
-    icon: <CameraOutlined />,
-  },
+  // {
+  //   name: "Danh sách yêu thích",
+  //   path: "/favorite",
+  //   component: Home,
+  //   layout: MainLayout,
+  //   showInMenu: true,
+  //   private: false,
+  //   icon: <HeartOutlined />,
+  // },
+  // {
+  //   name: "Cài đặt",
+  //   path: "/setting",
+  //   component: Home,
+  //   layout: MainLayout,
+  //   showInMenu: true,
+  //   private: false,
+  //   icon: <SettingOutlined />,
+  // },
+  // {
+  //   name: "Đánh giá dịch vụ",
+  //   path: "/rating",
+  //   component: Home,
+  //   layout: MainLayout,
+  //   showInMenu: true,
+  //   private: false,
+  //   icon: <StarOutlined />,
+  // },
+  // {
+  //   name: "Khoảnh khắc du lịch",
+  //   path: "/moment",
+  //   component: Home,
+  //   layout: MainLayout,
+  //   showInMenu: true,
+  //   private: false,
+  //   icon: <CameraOutlined />,
+  // },
   {
     name: "Chi tiết vé",
-    path: "/details",
+    path: BaseUrl.DetailVe,
     component: DetailsVe,
+    layout: MainLayout,
+    showInMenu: false,
+    private: false,
+    icon: null,
+  },
+  {
+    name: null,
+    path: BaseUrl.Profile,
+    component: Profile,
     layout: MainLayout,
     showInMenu: false,
     private: false,

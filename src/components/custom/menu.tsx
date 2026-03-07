@@ -1,9 +1,14 @@
 import { Link, useLocation } from "react-router-dom";
 import routes from "../../router/router";
+import { LogoutOutlined } from "@ant-design/icons";
 
 const MenuCustom = () => {
   const location = useLocation();
-
+  const removeUserProfile = () => {
+    localStorage.removeItem("user_profile");
+    localStorage.removeItem("access_token")
+    window.location.href = '/'
+  };
   return (
     <nav className="custom-menu">
       <ul className="custom-menu__list desktopMenu">
@@ -20,6 +25,12 @@ const MenuCustom = () => {
               </Link>
             </li>
           ))}
+        <li
+          className="logout"
+           onClick={removeUserProfile}
+        >
+          <LogoutOutlined /> Đăng xuất
+        </li>
       </ul>
     </nav>
   );

@@ -9,10 +9,11 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
   const location = useLocation();
 
   const profileString = localStorage.getItem("user_profile");
-
   const profile = profileString ? JSON.parse(profileString) : null;
 
-  if (!profile || profile.role !== "ADMIN") {
+  const allowRoles = ["ADMIN", "EMPLOYEE", "SUPPLIER", "ACCOUNTANT"];
+
+  if (!profile || !allowRoles.includes(profile.role)) {
     return (
       <Navigate
         to="/login"
@@ -20,7 +21,8 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
         state={{ from: location }}
       />
     );
-  } 
+  }
+
   return <>{children}</>;
 };
 
