@@ -12,13 +12,21 @@ import MainLayoutAdmin from "../admin/layout";
 const Login = lazy(() => import("../page/Login/index"));
 const Home = lazy(() => import("../page/AllTicket/index"));
 const DetailsVe = lazy(() => import("../page/DetailsVe/index"));
-const HomeAdmin = lazy(() => import("../admin/page/home"));
-const QuanLiNhanVien = lazy(() => import("../admin/page/taiKhoanVaPhanQuyen"));
-const AddAccount = lazy(() => import("../admin/page/addAcc"));
+const HomeAdmin = lazy(() => import("../admin/page/ManADMIN/home"));
+const QuanLiNhanVien = lazy(() => import("../admin/page/ManADMIN/taiKhoanVaPhanQuyen"));
+const AddAccount = lazy(() => import("../admin/page/ManADMIN/addAcc"));
 const Profile = lazy(() => import("../page/Profile/index"));
 const QuanLiDonHang = lazy(() => import("../page/QuanLiDonHang/index"));
 const MyTicket = lazy(() => import("../page/MyTicket/index"));
 const MyCart = lazy(() => import("../page/Cart/index"));
+const NhaPhanPhoi = lazy(() => import("../admin/page/ManPhanPhoi/qlInfor"));
+const NhaPhanPhoiPro = lazy(() => import("../admin/page/ManPhanPhoi/qlPro"));
+const NhaPhanPhoiDoanhThu = lazy(() => import("../admin/page/ManPhanPhoi/doanhThu"));
+const NhaPhanPhoiDoanhThuSP = lazy(() => import("../admin/page/ManPhanPhoi/dtProduct"));
+const NVQLPRO = lazy(() => import("../admin/page/ManNV/InforPro"));
+const AccountCutomer = lazy(() => import("../admin/page/ManADMIN/GetKhachHang"));
+const AccountMerchant = lazy(() => import("../admin/page/ManADMIN/GetMerchant"));
+const AdminDT = lazy(() => import("../admin/page/ManADMIN/doanhThuAdmin"));
 export interface AppRoute {
   name: string;
   path: string;
@@ -35,7 +43,7 @@ const routes = [
     component: Home,
     layout: MainLayout,
     showInMenu: true,
-    private: false,
+    private: true,
     icon: <HomeOutlined />,
   },
   {
@@ -44,7 +52,7 @@ const routes = [
     component: QuanLiDonHang,
     layout: MainLayout,
     showInMenu: true,
-    private: false,
+    private: true,
     icon: <FileTextOutlined />,
   },
   {
@@ -53,7 +61,7 @@ const routes = [
     component: MyCart,
     layout: MainLayout,
     showInMenu: true,
-    private: false,
+    private: true,
     icon: <ShoppingCartOutlined />,
   },
   {
@@ -62,7 +70,7 @@ const routes = [
     component: MyTicket,
     layout: MainLayout,
     showInMenu: true,
-    private: false,
+    private: true,
     icon: <IdcardOutlined />,
   },
   // {
@@ -150,6 +158,80 @@ const routes = [
     name: null,
     path: BaseUrl.AddAccount,
     component: AddAccount,
+    layout: MainLayoutAdmin,
+    showInMenu: false,
+    private: true,
+    icon: null,
+  },
+  {
+    name: null,
+    path: BaseUrl.AccountCutomer,
+    component: AccountCutomer,
+    layout: MainLayoutAdmin,
+    showInMenu: false,
+    private: true,
+    icon: null,
+  },
+  {
+    name: null,
+    path: BaseUrl.AccountMerchant,
+    component: AccountMerchant,
+    layout: MainLayoutAdmin,
+    showInMenu: false,
+    private: true,
+    icon: null,
+  },
+  {
+    name: null,
+    path: BaseUrl.AdminDT,
+    component: AdminDT,
+    layout: MainLayoutAdmin,
+    showInMenu: false,
+    private: true,
+    icon: null,
+  },
+  // nha phan phoi
+  {
+    name: null,
+    path: BaseUrl.NhaPhanPhoi,
+    component: NhaPhanPhoi,
+    layout: MainLayoutAdmin,
+    showInMenu: false,
+    private: true,
+    icon: null,
+  },
+  {
+    name: null,
+    path: BaseUrl.NhaPhanPhoiPro,
+    component: NhaPhanPhoiPro,
+    layout: MainLayoutAdmin,
+    showInMenu: false,
+    private: true,
+    icon: null,
+  },
+  {
+    name: null,
+    path: BaseUrl.NhaPhanPhoiDoanhThu,
+    component: NhaPhanPhoiDoanhThu,
+    layout: MainLayoutAdmin,
+    showInMenu: false,
+    private: true,
+    icon: null,
+  },
+  {
+    name: null,
+    path: BaseUrl.NhaPhanPhoiDoanhThuSP,
+    component: NhaPhanPhoiDoanhThuSP,
+    layout: MainLayoutAdmin,
+    showInMenu: false,
+    private: true,
+    icon: null,
+  },
+  // NHAN VIEN 
+  {
+    name: null,
+    path: BaseUrl.NVQLPRO,
+    component: NVQLPRO,
     layout: MainLayoutAdmin,
     showInMenu: false,
     private: true,

@@ -9,6 +9,7 @@ interface Props {
   variant?: "default" | "purple";
   error?: boolean;
   disabled?: boolean; 
+  style?: any
 }
 
 const CommonInput: React.FC<Props> = ({
@@ -20,6 +21,7 @@ const CommonInput: React.FC<Props> = ({
   variant = "default",
   error = false,
   disabled = false,   
+  style
 }) => {
   return (
     <div
@@ -34,7 +36,8 @@ const CommonInput: React.FC<Props> = ({
         onChange={onChange}
         placeholder={placeholder}
         name={name}
-        disabled={disabled}   
+        disabled={disabled}
+        style={style}
       />
     </div>
   );

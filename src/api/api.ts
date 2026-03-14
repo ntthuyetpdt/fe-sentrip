@@ -97,6 +97,7 @@ export const myTicket = async () => {
 };
 
 
+//admin
 export const getEmployee = async () => {
   const res = await axiosInstance.get("/employee/getAll");
   return res.data;
@@ -123,3 +124,112 @@ export const deleteEmployee = async (id: number) => {
   );
   return res.data;
 };
+
+
+export const getCustomer = async () => {
+  const res = await axiosInstance.get("/customer/getAll");
+  return res.data;
+};
+
+export const searchCustomer = async (params: any) => {
+  const res = await axiosInstance.get("/customer/search", {
+    params,
+  });
+  return res.data;
+};
+
+export const getMechant = async () => {
+  const res = await axiosInstance.get("/merchant/getAll");
+  return res.data;
+};
+
+export const searchMechant = async (params: any) => {
+  const res = await axiosInstance.get("/merchant/search", {
+    params,
+  });
+  return res.data;
+};
+
+export const dashboardAdmin = async (body: any) => {
+  const res = await axiosInstance.post("/dashboard/summary", body);
+  return res.data;
+};
+
+export const dashboardAdminBD = async (body: any) => {
+  const res = await axiosInstance.post("/dashboard/monthly-revenue", body);
+  return res.data;
+};
+
+// nhà phân phối
+
+
+export const viewProductSupplier = async () => {
+  const res = await axiosInstance.get("/merchant/getMechant");
+  return res.data;
+};
+
+export const createProduct = async (body: any) => {
+  const res = await axiosInstance.post("/product/create", body);
+  return res.data;
+};
+
+export const updateProduct = async (id: any, body: any) => {
+  const res = await axiosInstance.post(`/product/update/${id}`, body);
+  return res.data;
+};
+
+export const deleteProduct = async (id: any) => {
+  const res = await axiosInstance.post(`/product/delete/${id}`);
+  return res.data;
+};
+
+export const searchProductMer = async (productName?: string, address?: string, price?: string) => {
+  let query = "";
+
+  if (productName) {
+    query += `productName=${encodeURIComponent(productName)}`;
+  }
+
+  if (address) {
+    query += `${query ? "&" : ""}address=${encodeURIComponent(address)}`;
+  }
+
+  if (price) {
+    query += `${query ? "&" : ""}price=${encodeURIComponent(price)}`;
+  }
+
+  const url = query ? `/product/search?${query}` : `/product/search`;
+
+  const res = await axiosInstance.get(url);
+  return res.data;
+};
+
+
+export const viewCutomerOrdered = async () => {
+  const res = await axiosInstance.get("/product/getOderCustome");
+  return res.data;
+};
+
+export const viewMerchanTotal = async (body: any) => {
+  const res = await axiosInstance.post("/merchant/dashboard", body);
+  return res.data;
+};
+
+export const viewMerchanKHDetails = async (id: any) => {
+  const res = await axiosInstance.get(`/merchant/DetailedSet/${id}`);
+  return res.data;
+};
+
+export const viewMerProInfor = async () => {
+  const res = await axiosInstance.get(`merchant/statistics`);
+  return res.data;
+};
+
+
+// màn nhân viên 
+
+export const viewInforPro = async () => {
+  const res = await axiosInstance.get("/order/getall");
+  return res.data;
+};
+

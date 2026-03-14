@@ -1,0 +1,381 @@
+$primary-color: #1890ff;
+$success-color: #52c41a;
+$warning-color: #faad14;
+$danger-color: #f5222d;
+$text-color: rgba(0, 0, 0, 0.85);
+$text-color-secondary: rgba(0, 0, 0, 0.45);
+$border-color: #f0f0f0;
+$card-shadow: 0 2px 6px rgba(0, 0, 0, 0.08),
+    0 6px 16px rgba(0, 0, 0, 0.08);
+
+@mixin card-hover {
+    transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+}
+
+@mixin statistic-card($color) {
+    border-left: 4px solid $color;
+    background: linear-gradient(to right, rgba($color, 0.02), transparent);
+
+    .card-content {
+        .card-icon {
+            color: $color;
+        }
+
+        .card-info {
+            h3 {
+                color: $text-color-secondary;
+            }
+
+            h2 {
+                color: $color;
+            }
+        }
+    }
+}
+
+
+.dashboard-admin {
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+
+        h1 {
+            font-size: 20px;
+            font-weight: 600;
+            color: $text-color;
+            margin: 0;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 20px;
+
+            .stat-item {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+
+                .stat-label {
+                    font-size: 14px;
+                    color: $text-color-secondary;
+                }
+
+                .stat-value {
+                    font-size: 16px;
+                    font-weight: 600;
+
+                    &.success {
+                        color: $success-color;
+                    }
+
+                    &.danger {
+                        color: $danger-color;
+                    }
+                }
+            }
+        }
+    }
+
+    // Date picker section
+    .date-picker-section {
+        background: white;
+        padding: 16px 20px;
+        border-radius: 8px;
+        margin-bottom: 24px;
+        box-shadow: $card-shadow;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+
+        .label {
+            color: $text-color-secondary;
+            font-weight: 500;
+            font-size: 14px;
+            white-space: nowrap;
+
+            .anticon {
+                margin-right: 8px;
+            }
+        }
+
+        .ant-picker {
+            border-radius: 6px;
+            border: 1px solid $border-color;
+
+            &:hover,
+            &:focus {
+                border-color: $primary-color;
+            }
+
+            .ant-picker-input>input {
+                font-size: 14px;
+            }
+        }
+    }
+
+    // Stats grid
+    .stats-grid {
+        margin-bottom: 24px;
+
+        .stat-card {
+            height: 100%;
+
+            .ant-card {
+                border-radius: 8px;
+                border: none;
+                box-shadow: $card-shadow;
+                @include card-hover;
+
+                .ant-card-body {
+                    padding: 20px;
+                }
+            }
+
+            .card-content {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+
+                .card-icon {
+                    font-size: 32px;
+                    opacity: 0.8;
+                }
+
+                .card-info {
+                    flex: 1;
+
+                    h3 {
+                        margin: 0 0 4px 0;
+                        font-size: 14px;
+                        font-weight: 500;
+                        color: $text-color-secondary;
+                    }
+
+                    h2 {
+                        margin: 0;
+                        font-size: 24px;
+                        font-weight: 600;
+                    }
+                }
+            }
+
+            // Card types
+            &.total-orders {
+                .ant-card {
+                    @include statistic-card($primary-color);
+                }
+            }
+
+            &.success-orders {
+                .ant-card {
+                    @include statistic-card($success-color);
+                }
+            }
+
+            &.cancelled-orders {
+                .ant-card {
+                    @include statistic-card($danger-color);
+                }
+            }
+
+            &.total-customers {
+                .ant-card {
+                    @include statistic-card(#722ed1);
+                }
+            }
+
+            &.total-employees {
+                .ant-card {
+                    @include statistic-card(#fa8c16);
+                }
+            }
+
+            &.total-merchants {
+                .ant-card {
+                    @include statistic-card(#13c2c2);
+                }
+            }
+        }
+    }
+
+    // Summary grid
+    .summary-grid {
+        margin-bottom: 32px;
+
+        .summary-card {
+            .ant-card-body {
+                padding: 16px;
+            }
+
+            .summary-content {
+                .summary-label {
+                    font-size: 13px;
+                    color: $text-color-secondary;
+                    margin-bottom: 4px;
+                }
+
+                .summary-value {
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: $primary-color;
+                }
+            }
+        }
+    }
+
+    // Chart section
+    .chart-section {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: $card-shadow;
+        margin-bottom: 24px;
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+
+            h2 {
+                font-size: 18px;
+                font-weight: 600;
+                color: $text-color;
+                margin: 0 0 4px 0;
+            }
+
+            .chart-subtitle {
+                font-size: 13px;
+                color: $text-color-secondary;
+                margin: 0;
+            }
+
+            .chart-controls {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+
+                .label {
+                    font-size: 13px;
+                    color: $text-color-secondary;
+                }
+
+                .ant-picker {
+                    border-radius: 6px;
+                }
+            }
+        }
+
+        .chart-container {
+            min-height: 450px;
+            position: relative;
+        }
+    }
+
+    // Loading container
+    .loading-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 400px;
+        flex-direction: column;
+        gap: 16px;
+
+        .ant-spin-text {
+            margin-top: 8px;
+            color: $text-color-secondary;
+        }
+    }
+
+    // Empty hint
+    .empty-hint {
+        display: block;
+        margin-top: 8px;
+        font-size: 13px;
+        color: $text-color-secondary;
+    }
+
+    // Footer
+    .dashboard-footer {
+        text-align: right;
+        font-size: 12px;
+        color: $text-color-secondary;
+        padding: 16px 0 0;
+        border-top: 1px solid $border-color;
+    }
+
+    // Responsive
+    @media (max-width: 768px) {
+        padding: 16px;
+
+        .dashboard-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+
+            .header-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+
+        .date-picker-section {
+            flex-direction: column;
+            align-items: flex-start;
+
+            .ant-picker {
+                width: 100%;
+            }
+        }
+
+        .chart-header {
+            flex-direction: column;
+            gap: 16px;
+
+            .chart-controls {
+                width: 100%;
+                flex-wrap: wrap;
+
+                .ant-picker {
+                    flex: 1;
+                }
+            }
+        }
+    }
+
+    @media (max-width: 480px) {
+        padding: 12px;
+
+        .card-content {
+            .card-icon {
+                font-size: 24px;
+            }
+
+            .card-info {
+                h2 {
+                    font-size: 20px;
+                }
+            }
+        }
+
+        .header-stats {
+            flex-direction: column;
+            gap: 8px !important;
+        }
+
+        .summary-value {
+            font-size: 16px;
+        }
+    }
+}

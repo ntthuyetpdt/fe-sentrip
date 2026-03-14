@@ -3,6 +3,7 @@ import ButtonCustom from "../../components/custom/button";
 import { useTranslation } from "react-i18next";
 import { authRegister } from "../../api/auth";
 import { message } from "antd";
+import CommonSelect from "../../components/custom/select";
 
 interface RegisterProps {
   onRegisterSuccess: () => void;
@@ -15,6 +16,7 @@ const Register: React.FC<RegisterProps> = ({
 }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -35,8 +37,9 @@ const Register: React.FC<RegisterProps> = ({
       setLoading(true);
 
       const body = {
-        gmail: username,  
+        gmail: username,
         password: password,
+        Role: role
       };
 
       const res = await authRegister(body);
@@ -81,7 +84,14 @@ const Register: React.FC<RegisterProps> = ({
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
       </div>
-
+      <CommonSelect
+        placeholder="Chọn chức vụ"
+        options={[
+          { label: "Người dùng", value: "4" },
+          { label: "Nhà phân phối", value: "5" },
+        ]}
+        onChange={(value: string) => setRole(value)}
+      />
       <ButtonCustom
         text={loading ? "Loading..." : (t("Register") as string)}
         onClick={handleRegister}

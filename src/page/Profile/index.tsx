@@ -77,7 +77,7 @@ const CustomerProfile: React.FC = () => {
       }
 
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/customer/update/${encodeURIComponent(
+        `${process.env.REACT_APP_API_URL}/customer/update/${(
           customer.gmail
         )}`,
         {
@@ -104,12 +104,11 @@ const CustomerProfile: React.FC = () => {
   };
 
   return (
-    <div className="customer-profile">
+    <div>
       <div className="customer-profile">
         <BgWhiteBorder className="paddingProfile">
           <Row gutter={[24, 24]} className="profile-row">
 
-            {/* LEFT */}
             <Col xs={24} md={6} className="profile-left">
               <Avatar
                 size={160}

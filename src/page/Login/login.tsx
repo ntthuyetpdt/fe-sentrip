@@ -5,6 +5,7 @@ import { message } from "antd";
 import { authLogin } from "../../api/auth";
 import { useNavigate } from "react-router-dom";
 import { getProfile } from "../../api/api";
+import { stringify } from "querystring";
 
 interface LoginProps {
   onClose?: () => void;
@@ -18,7 +19,7 @@ const Login: React.FC<LoginProps> = ({ onRegister, router }) => {
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
   const navigate = useNavigate();
-
+  const allowRoles = ["ADMIN", "EMPLOYEE", "SUPPLIER", "ACCOUNTANT"];
   const handleLogin = async () => {
     if (!gmail || !password) {
       message.warning("Please enter email and password");
@@ -49,10 +50,16 @@ const Login: React.FC<LoginProps> = ({ onRegister, router }) => {
         );
       }
       message.success("Login success");
-      if (router) {
+
+      const user_profile = JSON.parse(localStorage.getItem("user_profile") || "{}");
+      const role = user_profile.role;
+
+      if (allowRoles.includes(role)) {
         navigate(`/admin`);
       } else {
-        window.location.href = "/"
+        console.log(role);
+        if (role == "CUSTOME")
+          navigate(`/`);
       }
 
 

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import CommonTable from "../../components/custom/table";
-import { getEmployee, searchEmployee, editEmployee, deleteEmployee, createEmployee } from "../../api/api";
-import EmployeeModal from "../components/EmployeeModal";
+import CommonTable from "../../../components/custom/table";
+import { getEmployee, searchEmployee, editEmployee, deleteEmployee, createEmployee } from "../../../api/api";
+import EmployeeModal from "../../components/EmployeeModal";
 import { DeleteOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
-import { message, Popconfirm, Button } from "antd";
-import ButtonCustom from "../../components/custom/button";
+import { message, Popconfirm, Button, Space } from "antd";
+import ButtonCustom from "../../../components/custom/button";
 
 interface Employee {
   id: any;
@@ -76,30 +76,29 @@ const QuanLiNhanVien = () => {
     {
       title: "Thao tác",
       render: (_: any, record: Employee) => (
-        <>
-          <a
+        <Space size="middle">
+          <EyeOutlined
+            style={{ color: "violet", cursor: "pointer" }}
             onClick={() => {
               setSelectedEmployee(record);
               setMode("view");
               setModalOpen(true);
             }}
-          >
-            <EyeOutlined style={{ color: 'violet' }} />
-          </a>
-          {" | "}
-          <a
+          />
+
+          <EditOutlined
+            style={{ color: "#4C1D95", cursor: "pointer" }}
             onClick={() => {
               setSelectedEmployee(record);
               setMode("edit");
               setModalOpen(true);
             }}
-          >
-            <EditOutlined style={{ color: '#4C1D95' }} />
-          </a>
-          {" | "}
+          />
 
           <Popconfirm
             title="Bạn có chắc muốn xoá nhân viên này?"
+            okText="Xoá"
+            cancelText="Huỷ"
             onConfirm={async () => {
               try {
                 await deleteEmployee(Number(record.id));
@@ -109,16 +108,14 @@ const QuanLiNhanVien = () => {
                 message.error("Xoá thất bại");
               }
             }}
-            okText="Xoá"
-            cancelText="Huỷ"
           >
-            <a>
-              <DeleteOutlined style={{ color: "red" }} />
-            </a>
+            <DeleteOutlined
+              style={{ color: "red", cursor: "pointer" }}
+            />
           </Popconfirm>
-        </>
+        </Space>
       ),
-    },
+    }
   ];
 
   const fetchEmployees = async () => {
@@ -147,7 +144,7 @@ const QuanLiNhanVien = () => {
 
     try {
       setLoading(true);
-      const data = await searchEmployee({ mnv: searchValue });
+      const data = await searchEmployee({ fullName: searchValue });
       const value = data.data
       if (Array.isArray(value)) {
         setData(value);
@@ -185,7 +182,7 @@ const QuanLiNhanVien = () => {
         dataSource={data}
         loading={loading}
         pagination={pagination}
-        rowKeyField="mnv"
+        rowKeyField="fullName"
         searchValue={searchValue}
         onSearchChange={setSearchValue}
         onSearchClick={handleSearch}

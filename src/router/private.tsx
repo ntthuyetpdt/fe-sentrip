@@ -13,12 +13,26 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
 
   const allowRoles = ["ADMIN", "EMPLOYEE", "SUPPLIER", "ACCOUNTANT"];
 
-  if (!profile || !allowRoles.includes(profile.role)) {
+  if (!profile) {
     return (
       <Navigate
         to="/login"
         replace
         state={{ from: location }}
+      />
+    );
+  }
+
+  if (!allowRoles.includes(profile.role)) {
+
+    if (location.pathname === "/") {
+      return <>{children}</>;
+    }
+
+    return (
+      <Navigate
+        to="/"
+        replace
       />
     );
   }

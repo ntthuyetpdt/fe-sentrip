@@ -159,7 +159,7 @@ const Index = () => {
         <div className="cart-header">
           <BgWhiteBorder>
             <div className="header-content">
-              <h3>Giỏ hàng của tôi</h3>
+              <h3>Giỏ hàng</h3>
 
               {!editMode ? (
                 <ButtonCustom

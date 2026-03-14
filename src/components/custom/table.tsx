@@ -6,7 +6,7 @@ import ButtonCustom from "./button";
 
 interface CommonTableProps<T> extends TableProps<T> {
   rowKeyField: keyof T;
-  showSearch?: boolean;
+  hideSearch?: boolean;
   searchValue?: string;
   onSearchChange?: (value: string) => void;
   onSearchClick?: () => void;
@@ -17,7 +17,7 @@ function CommonTable<T extends object>({
   dataSource = [],
   pagination,
   rowKeyField,
-  showSearch = true,
+  hideSearch = false,
   searchValue = "",
   onSearchChange,
   onSearchClick,
@@ -26,14 +26,15 @@ function CommonTable<T extends object>({
 }: CommonTableProps<T>) {
   return (
     <div className="common-table">
-      {showSearch && (
-        <Space style={{ marginBottom: 20, display: 'flex', justifyContent: 'end' }}>
-          <div style={{ width: '500px' }}>
+      {!hideSearch && (
+        <Space style={{ marginBottom: 20, display: "flex", justifyContent: "end" }}>
+          <div style={{ width: "500px" }}>
             <CommonInput
               placeholder="Nhập từ khóa..."
               value={searchValue}
               onChange={(e) => onSearchChange?.(e.target.value)}
               variant="purple"
+              style={{borderRadius: "999px"}}
             />
           </div>
 

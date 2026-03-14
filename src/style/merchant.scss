@@ -1,0 +1,51 @@
+$color-revenue: #fef3c7;    
+$color-customers: #dbeafe;   
+$color-orders: #dcfce7;   
+$text-color: #1f2937;
+
+.row-cards {
+  margin-bottom: 20px;
+
+  .ant-col {
+
+    .ant-card {
+      color: $text-color;
+      transition: all 0.3s ease;
+      padding: 14px;
+      border-radius: 10px;
+
+      h3 {
+        margin: 0 0 6px 0;
+        font-size: 13px;  
+        font-weight: 500;
+        opacity: 0.8;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: 20px; 
+        font-weight: 600;
+      }
+
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+      }
+
+      &.card-revenue {
+        background: $color-revenue;
+        border-left: 4px solid #f59e0b;
+      }
+
+      &.card-customers {
+        background: $color-customers;
+        border-left: 4px solid #3b82f6;
+      }
+
+      &.card-orders {
+        background: $color-orders;
+        border-left: 4px solid #22c55e;
+      }
+    }
+  }
+}

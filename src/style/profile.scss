@@ -13,6 +13,10 @@
 
     .paddingProfile {
         padding: 30px;
+
+        @media screen and (max-width: 1024px) {
+            margin-top: 65px;
+        }
     }
 
     .profile-left {
@@ -39,6 +43,7 @@
         border-radius: 18px;
         border: none !important;
         transition: all 0.3s ease;
+
         .ant-form-item {
             margin-bottom: 16px;
         }
@@ -82,7 +87,7 @@
 
 @media (max-width: 768px) {
     .customer-profile {
-        margin: 20px auto;
+        margin: 0px auto;
 
         .profile-avatar {
             width: 120px !important;
@@ -99,6 +104,6 @@
     }
 }
 
-.ant-card-body{
+.ant-card-body {
     padding: 10px !important;
 }

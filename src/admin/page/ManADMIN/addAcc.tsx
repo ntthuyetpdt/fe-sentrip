@@ -1,9 +1,9 @@
 import { Select, Card, message } from "antd";
 import { useState } from "react";
-import { AddAccount } from "../../api/api";
-import ButtonCustom from "../../components/custom/button";
-import CommonInput from "../../components/custom/input";
-import CommonSelect from "../../components/custom/select";
+import { AddAccount } from "../../../api/api";
+import ButtonCustom from "../../../components/custom/button";
+import CommonInput from "../../../components/custom/input";
+import CommonSelect from "../../../components/custom/select";
 
 const { Option } = Select;
 
@@ -47,7 +47,7 @@ const AddAcc = () => {
 
     return (
         <div className="add-acc">
-            <Card style={{ maxWidth: 500, border: 'none'}}>
+            <Card style={{ maxWidth: 500, border: 'none' }}>
 
                 <div className="field">
                     <label>Email</label>
@@ -57,7 +57,7 @@ const AddAcc = () => {
                         placeholder="Nhập email..."
                         variant="purple"
                     />
-                </div>  
+                </div>
 
                 <div className="field">
                     <label>Chức vụ</label>

@@ -34,7 +34,7 @@ const ModalCustom: React.FC<ModalCustomProps> = ({
       modalRender={(modal) => (
         <div
           style={{
-            borderRadius: "40px",
+            borderRadius: "10px",
             overflow: "hidden",
           }}
         >
