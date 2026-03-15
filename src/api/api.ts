@@ -165,13 +165,26 @@ export const dashboardAdminBD = async (body: any) => {
   return res.data;
 };
 
+
+// đi đơn export
+export const exportExcel = async () => {
+  const res = await axiosInstance.get("/export/excel", {
+    responseType: "arraybuffer",
+  });
+  return res.data;
+};
+
+export const exportPDF = async (orderCode: any) => {
+  const res = await axiosInstance.get(`/export/bill/${orderCode}`);
+  return res.data;
+};
 // nhà phân phối
 
 
 export const viewProductSupplier = async () => {
   const res = await axiosInstance.get("/merchant/products");
   return res.data;
-};  
+};
 
 export const createProduct = async (body: any) => {
   const res = await axiosInstance.post("/product/create", body);

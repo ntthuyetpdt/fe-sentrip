@@ -95,6 +95,11 @@ const AdminLayout = ({ children, breadcrumb = [] }: AdminLayoutProps) => {
       icon: <LineChartOutlined />,
       label: "Thông số doanh thu",
     },
+    {
+      key: "nv_ql_infor_pro",
+      icon: <IdcardOutlined />,
+      label: "Danh sách đơn hàng",
+    },
   ];
 
   //menu nhan vien

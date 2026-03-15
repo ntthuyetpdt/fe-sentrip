@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import CommonTable from "../../../components/custom/table";
-import { viewInforPro } from "../../../api/api";
+import { viewInforPro, exportExcel, exportPDF } from "../../../api/api";
 
-import { EyeOutlined } from "@ant-design/icons";
-import { Space } from "antd";
+import { EyeOutlined, FileExcelOutlined, FilePdfOutlined } from "@ant-design/icons";
+import { Space, Button, message } from "antd";
 
 import NVInforPro from "../../components/NVInforPro";
 
@@ -20,45 +20,95 @@ export interface OrderInfor {
 }
 
 const InforPro = () => {
-
   const [data, setData] = useState<OrderInfor[]>([]);
   const [loading, setLoading] = useState(false);
+  const [exportingExcel, setExportingExcel] = useState(false);
+  const [exportingPDF, setExportingPDF] = useState<string | null>(null);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [selected, setSelected] = useState<OrderInfor | null>(null);
 
+  const handleExportExcel = async () => {
+    try {
+      setExportingExcel(true);
+      const res = await exportExcel();
+
+      const blob = new Blob([res], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `danh-sach-don-hang-${Date.now()}.xlsx`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      message.success("Xuất Excel thành công!");
+    } catch (err) {
+      console.log(err);
+      message.error("Xuất Excel thất bại!");
+    } finally {
+      setExportingExcel(false);
+    }
+  };
+
+
+  const handleExportPDF = async (orderCode: string) => {
+    try {
+      setExportingPDF(orderCode);
+      const res = await exportPDF(orderCode);
+
+      const pdfUrl = res.data;
+
+      const link = document.createElement("a");
+      link.href = pdfUrl;
+      link.download = `hoa-don-${orderCode}.pdf`;
+      link.target = "_blank"; 
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      message.success(`Xuất PDF đơn ${orderCode} thành công!`);
+    } catch (err) {
+      console.log(err);
+      message.error("Xuất PDF thất bại!");
+    } finally {
+      setExportingPDF(null);
+    }
+  };
+
   const columns = [
     {
       title: "Mã đơn",
-      dataIndex: "orderCode"
+      dataIndex: "orderCode",
     },
     {
       title: "Tên KH",
-      dataIndex: "fullNameCustomer"
+      dataIndex: "fullNameCustomer",
     },
     {
       title: "Loại dịch vụ",
-      dataIndex: "serviceType"
+      dataIndex: "serviceType",
     },
     {
       title: "Dịch vụ thêm",
-      dataIndex: "additionalService"
+      dataIndex: "additionalService",
     },
     {
       title: "Địa chỉ",
-      dataIndex: "address"
+      dataIndex: "address",
     },
     {
       title: "Giá",
       dataIndex: "totalAmount",
-      render: (price: number) =>
-        price?.toLocaleString("vi-VN") + " đ"
+      render: (price: number) => price?.toLocaleString("vi-VN") + " đ",
     },
     {
       title: "Ngày tạo",
       dataIndex: "createdAt",
-      render: (date: string) =>
-        new Date(date).toLocaleString("vi-VN")
+      render: (date: string) => new Date(date).toLocaleString("vi-VN"),
     },
     {
       title: "Thao tác",
@@ -71,22 +121,29 @@ const InforPro = () => {
               setModalOpen(true);
             }}
           />
+          <FilePdfOutlined
+            style={{
+              color: exportingPDF === record.orderCode ? "gray" : "red",
+              cursor: exportingPDF === record.orderCode ? "not-allowed" : "pointer",
+              fontSize: 16,
+            }}
+            onClick={() => {
+              if (!exportingPDF) handleExportPDF(record.orderCode);
+            }}
+            title="Xuất PDF"
+          />
         </Space>
-      )
-    }
+      ),
+    },
   ];
 
   const fetchData = async () => {
     try {
-
       setLoading(true);
-
       const res = await viewInforPro();
-
       if (res?.data) {
         setData(res.data);
       }
-
     } catch (err) {
       console.log(err);
     } finally {
@@ -100,6 +157,18 @@ const InforPro = () => {
 
   return (
     <div>
+      {/* Nút xuất Excel đặt phía trên bảng */}
+      <div style={{ marginBottom: 16, display: "flex", justifyContent: "flex-end" }}>
+        <Button
+          type="primary"
+          icon={<FileExcelOutlined />}
+          loading={exportingExcel}
+          onClick={handleExportExcel}
+          style={{ backgroundColor: "#217346", borderColor: "#217346" }}
+        >
+          Xuất Excel
+        </Button>
+      </div>
 
       <CommonTable<OrderInfor>
         columns={columns}
@@ -114,7 +183,6 @@ const InforPro = () => {
         data={selected || undefined}
         onCancel={() => setModalOpen(false)}
       />
-
     </div>
   );
 };
