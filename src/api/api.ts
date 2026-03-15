@@ -16,7 +16,7 @@ export const getProfile = async () => {
 };
 
 export const viewProduct = async () => {
-  const res = await axiosInstance.get("/product/viewproduct");
+  const res = await axiosInstance.get("/product");
   return res.data;
 };
 
@@ -26,13 +26,13 @@ export const orderTicket = async (body: any) => {
 };
 
 export const oderUser = async () => {
-  const res = await axiosInstance.get("/order/getuser");
+  const res = await axiosInstance.get("/order/my");
   return res.data;
 };
 
 
 export const AddAccount = async (body: any) => {
-  const res = await axiosInstance.post(`/user/create`, body);
+  const res = await axiosInstance.post(`/user`, body);
   return res.data;
 };
 
@@ -44,7 +44,7 @@ export const getDetails = async (oderCode: any) => {
 
 
 export const getQr = async (body: any) => {
-  const res = await axiosInstance.post(`/payments/pay`, body);
+  const res = await axiosInstance.post(`/payments`, body);
   return res.data;
 };
 
@@ -72,17 +72,17 @@ export const searchProduct = async (productName?: string, address?: string, pric
 
 
 export const addCart = async (body: any) => {
-  const res = await axiosInstance.post(`/cart/add`, body);
+  const res = await axiosInstance.post(`/cart/oder`, body);
   return res.data;
 };
 
 export const viewCard = async () => {
-  const res = await axiosInstance.get(`/cart/my-cart`);
+  const res = await axiosInstance.get(`/cart/my`);
   return res.data;
 };
 
 export const deleteCart = async (cartItemId: any) => {
-  const res = await axiosInstance.delete(`/cart/delete/${cartItemId}`);
+  const res = await axiosInstance.post(`/cart/delete/${cartItemId}`);
   return res.data;
 };
 
@@ -99,7 +99,7 @@ export const myTicket = async () => {
 
 //admin
 export const getEmployee = async () => {
-  const res = await axiosInstance.get("/employee/getAll");
+  const res = await axiosInstance.get("/employee/getall");
   return res.data;
 };
 
@@ -127,7 +127,7 @@ export const deleteEmployee = async (id: number) => {
 
 
 export const getCustomer = async () => {
-  const res = await axiosInstance.get("/customer/getAll");
+  const res = await axiosInstance.get("/customer/getall");
   return res.data;
 };
 
@@ -139,7 +139,12 @@ export const searchCustomer = async (params: any) => {
 };
 
 export const getMechant = async () => {
-  const res = await axiosInstance.get("/merchant/getAll");
+  const res = await axiosInstance.get("/merchant");
+  return res.data;
+};
+
+export const deleteMechant = async (id: any) => {
+  const res = await axiosInstance.post(`/merchant/delete/${id}`);
   return res.data;
 };
 
@@ -164,9 +169,9 @@ export const dashboardAdminBD = async (body: any) => {
 
 
 export const viewProductSupplier = async () => {
-  const res = await axiosInstance.get("/merchant/getMechant");
+  const res = await axiosInstance.get("/merchant/products");
   return res.data;
-};
+};  
 
 export const createProduct = async (body: any) => {
   const res = await axiosInstance.post("/product/create", body);
@@ -206,7 +211,7 @@ export const searchProductMer = async (productName?: string, address?: string, p
 
 
 export const viewCutomerOrdered = async () => {
-  const res = await axiosInstance.get("/product/getOderCustome");
+  const res = await axiosInstance.get("/merchant/orders");
   return res.data;
 };
 
@@ -216,7 +221,7 @@ export const viewMerchanTotal = async (body: any) => {
 };
 
 export const viewMerchanKHDetails = async (id: any) => {
-  const res = await axiosInstance.get(`/merchant/DetailedSet/${id}`);
+  const res = await axiosInstance.get(`/merchant/detail/${id}`);
   return res.data;
 };
 

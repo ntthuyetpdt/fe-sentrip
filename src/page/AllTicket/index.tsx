@@ -95,12 +95,14 @@ const AllTicket = () => {
     };
 
     const handleDecrease = () => {
+
         if (quantity > 1) {
             setQuantity((prev) => prev - 1);
         }
     };
 
     const handleOrder = async () => {
+
         if (!selectedProduct) return;
 
         const body = {
@@ -220,7 +222,7 @@ const AllTicket = () => {
                         </div>
 
                         <div className="modal-actions">
-                            <ButtonCustom text="Thêm vào giỏ hàng" onClick={handleAddCart}/>
+                            <ButtonCustom text="Thêm vào giỏ hàng" onClick={handleAddCart} />
                             <ButtonCustom text="Đặt hàng" onClick={handleOrder} />
                         </div>
 

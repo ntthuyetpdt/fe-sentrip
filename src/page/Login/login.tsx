@@ -19,7 +19,8 @@ const Login: React.FC<LoginProps> = ({ onRegister, router }) => {
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const allowRoles = ["ADMIN", "EMPLOYEE", "SUPPLIER", "ACCOUNTANT"];
+  const allowRoles = ["ADMIN", "EMPLOYEE", "MERCHANT", "ACCOUNTANT"];
+  
   const handleLogin = async () => {
     if (!gmail || !password) {
       message.warning("Please enter email and password");
@@ -33,7 +34,7 @@ const Login: React.FC<LoginProps> = ({ onRegister, router }) => {
         password,
       });
 
-      if (loginRes.satus !== 200) {
+      if (loginRes.status !== "ok") {
         message.error(loginRes.message || "Login failed");
         return;
       }
@@ -43,7 +44,7 @@ const Login: React.FC<LoginProps> = ({ onRegister, router }) => {
 
       const profileRes = await getProfile();
 
-      if (profileRes.satus === 200) {
+      if (profileRes.code === 200) {
         localStorage.setItem(
           "user_profile",
           JSON.stringify(profileRes.data)

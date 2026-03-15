@@ -1,0 +1,315 @@
+$primary-color: #1890ff;
+$success-color: #52c41a;
+$warning-color: #faad14;
+$danger-color: #f5222d;
+$text-color: rgba(0, 0, 0, 0.85);
+$text-color-secondary: rgba(0, 0, 0, 0.45);
+$border-color: #f0f0f0;
+$card-shadow: 0 2px 6px rgba(0, 0, 0, 0.08),
+    0 6px 16px rgba(0, 0, 0, 0.08);
+
+
+$color-revenue: #3b82f6;
+$color-revenue-dark: #2563eb;
+$color-customers: #10b981;
+$color-customers-dark: #059669;
+$color-orders: #ef4444;
+$color-orders-dark: #7c3aed;
+$color-success-pie: #3b82f6;
+$color-cancelled-pie: #ef4444;
+
+
+@mixin card-hover {
+    transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+}
+
+
+@mixin statistic-card($color) {
+    border-top: none !important;
+    border-right: none !important;
+    border-bottom: none !important;
+    border-left: 4px solid $color !important;
+    background: linear-gradient(to right, rgba($color, 0.05), transparent) !important;
+
+    .dt-stat-icon {
+        color: $color;
+    }
+
+    .dt-stat-label {
+        color: $text-color-secondary;
+    }
+
+    .dt-stat-value {
+        color: $color;
+    }
+}
+
+
+.doanh-thu-container {
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+        'Helvetica Neue', Arial, sans-serif;
+
+
+    .dt-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+
+    .dt-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: $text-color;
+        margin: 0;
+    }
+
+    .dt-month-picker {
+        background: white;
+        padding: 16px 20px;
+        border-radius: 8px;
+        box-shadow: $card-shadow;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .ant-picker {
+            border-radius: 6px;
+            border: 1px solid $border-color;
+            transition: border-color 0.3s;
+
+            &:hover,
+            &:focus {
+                border-color: $primary-color;
+            }
+
+            .ant-picker-input>input {
+                font-size: 14px;
+            }
+        }
+    }
+
+    .dt-stats-row {
+        margin-bottom: 24px;
+
+        // FIX: class được đặt trực tiếp lên <Card>, không wrap thêm div
+        // nên selector phải nhắm thẳng vào .ant-card bên trong Col
+        .dt-stat-card {
+            height: 100%;
+
+            // Reset hover trên wrapper .ant-card
+            >.ant-card {
+                border-radius: 8px !important;
+                box-shadow: $card-shadow !important;
+                @include card-hover;
+
+                .ant-card-body {
+                    padding: 20px;
+                    display: flex;
+                    align-items: center;
+                    gap: 16px;
+                }
+            }
+
+            .dt-stat-icon {
+                font-size: 32px;
+                opacity: 0.8;
+                flex-shrink: 0;
+
+                i {
+                    font-size: 32px;
+                }
+            }
+
+            .dt-stat-content {
+                flex: 1;
+            }
+
+            .dt-stat-label {
+                margin: 0 0 4px 0;
+                font-size: 14px;
+                font-weight: 500;
+                color: $text-color-secondary;
+            }
+
+            .dt-stat-value {
+                margin: 0;
+                font-size: 24px;
+                font-weight: 600;
+            }
+
+            // FIX: dùng > .ant-card để tăng specificity, đè border của Ant Design
+            &--revenue>.ant-card {
+                @include statistic-card($color-revenue);
+
+                .dt-stat-icon {
+                    color: $color-revenue;
+                }
+
+                .dt-stat-value {
+                    color: $color-revenue;
+                }
+            }
+
+            &--customers>.ant-card {
+                @include statistic-card($color-customers);
+
+                .dt-stat-icon {
+                    color: $color-customers;
+                }
+
+                .dt-stat-value {
+                    color: $color-customers;
+                }
+            }
+
+            &--orders>.ant-card {
+                @include statistic-card($color-orders);
+
+                .dt-stat-icon {
+                    color: $color-orders;
+                }
+
+                .dt-stat-value {
+                    color: $color-orders;
+                }
+            }
+        }
+    }
+
+    .dt-chart-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: $card-shadow;
+        margin-bottom: 24px;
+
+        .ant-card-body {
+            padding: 24px;
+        }
+    }
+
+    .dt-chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 24px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid $border-color;
+        padding: 0px 20px;
+    }
+
+    .dt-chart-title {
+
+        font-size: 18px;
+        font-weight: 600;
+        color: $text-color;
+        margin: 0 0 4px 0;
+    }
+
+    .dt-chart-legend {
+        display: flex;
+        gap: 24px;
+        align-items: center;
+    }
+
+    .dt-legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        color: $text-color;
+    }
+
+    .dt-legend-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .dt-legend-item--success .dt-legend-dot {
+        background-color: $color-success-pie;
+        box-shadow: 0 2px 6px rgba(59, 130, 246, 0.4);
+    }
+
+    .dt-legend-item--cancelled .dt-legend-dot {
+        background-color: $color-cancelled-pie;
+        box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4);
+    }
+
+    .dt-chart-wrapper {
+        min-height: 450px;
+        position: relative;
+        overflow: hidden;
+
+        .highcharts-container,
+        .highcharts-root {
+            width: 100% !important;
+        }
+    }
+
+    .dt-footer {
+        text-align: right;
+        font-size: 12px;
+        color: $text-color-secondary;
+        padding: 16px 0 0;
+        border-top: 1px solid $border-color;
+    }
+
+    @media (max-width: 768px) {
+        padding: 16px;
+
+        .dt-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .dt-month-picker {
+            width: 100%;
+
+            .ant-picker {
+                width: 100%;
+            }
+        }
+
+        .dt-chart-header {
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .dt-chart-legend {
+            width: 100%;
+            justify-content: space-between;
+        }
+    }
+
+    @media (max-width: 480px) {
+        padding: 12px;
+
+        .dt-stat-icon {
+            font-size: 24px;
+
+            i {
+                font-size: 24px;
+            }
+        }
+
+        .dt-stat-value {
+            font-size: 20px;
+        }
+
+        .dt-chart-legend {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+    }
+}

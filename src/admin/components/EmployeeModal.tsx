@@ -120,7 +120,7 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({
                   { label: "EMPLOYEE", value: "EMPLOYEE" },
                   { label: "ACCOUNTANT", value: "ACCOUNTANT" },
                   { label: "CUSTOMER", value: "CUSTOMER" },
-                  { label: "SUPPLIER", value: "SUPPLIER" },
+                  { label: "MERCHANT", value: "MERCHANT" },
                 ]}
               />
             </Form.Item>

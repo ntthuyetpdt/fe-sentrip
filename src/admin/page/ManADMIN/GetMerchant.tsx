@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Space, Avatar } from "antd";
-import { EyeOutlined } from "@ant-design/icons";
+import { Space, Avatar, Modal, message, Popconfirm } from "antd";
+import { EyeOutlined, DeleteOutlined } from "@ant-design/icons";
 
 import CommonTable from "../../../components/custom/table";
 import GetMerchantModal from "../../components/GetMerchantModal";
 
-import { getMechant, searchMechant } from "../../../api/api";
+import { getMechant, searchMechant, deleteMechant } from "../../../api/api";
 
 export interface Merchant {
   id: number;
@@ -20,7 +20,6 @@ export interface Merchant {
 }
 
 const GetMerchant = () => {
-
   const [data, setData] = useState<Merchant[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -28,6 +27,7 @@ const GetMerchant = () => {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [selected, setSelected] = useState<Merchant | null>(null);
+
 
   const columns = [
     {
@@ -57,6 +57,7 @@ const GetMerchant = () => {
       title: "Thao tác",
       render: (_: any, record: Merchant) => (
         <Space>
+
           <EyeOutlined
             style={{ color: "violet", cursor: "pointer" }}
             onClick={() => {
@@ -64,10 +65,31 @@ const GetMerchant = () => {
               setModalOpen(true);
             }}
           />
+
+          <Popconfirm
+            title="Bạn có chắc muốn xoá merchant này?"
+            okText="Xoá"
+            cancelText="Huỷ"
+            onConfirm={async () => {
+              try {
+                await deleteMechant(Number(record.id));
+                message.success("Xoá thành công");
+                fetchMerchants();
+              } catch (error) {
+                message.error("Xoá thất bại");
+              }
+            }}
+          >
+            <DeleteOutlined
+              style={{ color: "red", cursor: "pointer" }}
+            />
+          </Popconfirm>
+
         </Space>
       )
     }
   ];
+
 
   const fetchMerchants = async () => {
     try {

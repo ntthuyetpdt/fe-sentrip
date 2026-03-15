@@ -11,7 +11,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
   const profileString = localStorage.getItem("user_profile");
   const profile = profileString ? JSON.parse(profileString) : null;
 
-  const allowRoles = ["ADMIN", "EMPLOYEE", "SUPPLIER", "ACCOUNTANT"];
+  const allowRoles = ["ADMIN", "EMPLOYEE", "MERCHANT", "ACCOUNTANT"];
 
   if (!profile) {
     return (

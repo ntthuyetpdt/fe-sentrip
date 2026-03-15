@@ -52,7 +52,7 @@ const routes = [
     component: QuanLiDonHang,
     layout: MainLayout,
     showInMenu: true,
-    private: true,
+    private: false,
     icon: <FileTextOutlined />,
   },
   {
@@ -61,7 +61,7 @@ const routes = [
     component: MyCart,
     layout: MainLayout,
     showInMenu: true,
-    private: true,
+    private: false,
     icon: <ShoppingCartOutlined />,
   },
   {

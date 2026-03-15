@@ -177,7 +177,7 @@ const AdminLayout = ({ children, breadcrumb = [] }: AdminLayoutProps) => {
   const menuByRole: Record<string, MenuItem[]> = {
     ADMIN: adminMenu,
     EMPLOYEE: employeeMenu,
-    SUPPLIER: supplierMenu,
+    MERCHANT: supplierMenu,
     ACCOUNTANT: accountantMenu,
   };
 
