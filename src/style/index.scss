@@ -16,6 +16,30 @@
     }
 }
 
+.btn-submit-unit {
+  background: #7c3aed; 
+  border-color: #7c3aed;
+  color: white;
+  border-radius: 999px;
+  padding: 0 14px;
+  height: 28px;
+  width: 29px !important;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+
+  &:hover {
+    background: #6d28d9 !important;
+    border-color: #6d28d9 !important;
+    color: #fff !important;
+  }
+
+  &:active {
+    background: #5b21b6 !important;
+    border-color: #5b21b6 !important;
+  }
+}
 @import './header.scss';
 @import './btnCustom.scss';
 @import './login.scss';
@@ -40,3 +64,4 @@
 @import './adminHome.scss';
 @import './doanhThuAdmin.scss';
 @import './doanhThuPhanPhoi.scss';
+@import './nhanVienBaoCao.scss';

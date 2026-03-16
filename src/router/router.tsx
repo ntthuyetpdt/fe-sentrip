@@ -23,10 +23,14 @@ const NhaPhanPhoi = lazy(() => import("../admin/page/ManPhanPhoi/qlInfor"));
 const NhaPhanPhoiPro = lazy(() => import("../admin/page/ManPhanPhoi/qlPro"));
 const NhaPhanPhoiDoanhThu = lazy(() => import("../admin/page/ManPhanPhoi/doanhThu"));
 const NhaPhanPhoiDoanhThuSP = lazy(() => import("../admin/page/ManPhanPhoi/dtProduct"));
+const NhaPhanPhoiBaoCao = lazy(() => import("../admin/page/ManPhanPhoi/trangThaiTien"));
 const NVQLPRO = lazy(() => import("../admin/page/ManNV/InforPro"));
 const AccountCutomer = lazy(() => import("../admin/page/ManADMIN/GetKhachHang"));
 const AccountMerchant = lazy(() => import("../admin/page/ManADMIN/GetMerchant"));
 const AdminDT = lazy(() => import("../admin/page/ManADMIN/doanhThuAdmin"));
+const KeToanQLThanhToan = lazy(() => import("../admin/page/ManKeToan/quanLiThanhToan"));
+const NVBAOCAO = lazy(() => import("../admin/page/ManNV/baoCao"));
+const KETOANDIDON = lazy(() => import("../admin/page/ManKeToan/quanLiDiDon"));
 export interface AppRoute {
   name: string;
   path: string;
@@ -122,7 +126,7 @@ const routes = [
     name: null,
     path: BaseUrl.Profile,
     component: Profile,
-    layout: MainLayout,
+    layout: null,
     showInMenu: false,
     private: false,
     icon: null,
@@ -227,11 +231,48 @@ const routes = [
     private: true,
     icon: null,
   },
+  {
+    name: null,
+    path: BaseUrl.NhaPhanPhoiBaoCao,
+    component: NhaPhanPhoiBaoCao,
+    layout: MainLayoutAdmin,
+    showInMenu: false,
+    private: true,
+    icon: null,
+  },
   // NHAN VIEN 
   {
     name: null,
     path: BaseUrl.NVQLPRO,
     component: NVQLPRO,
+    layout: MainLayoutAdmin,
+    showInMenu: false,
+    private: true,
+    icon: null,
+  },
+  {
+    name: null,
+    path: BaseUrl.NVBAOCAO,
+    component: NVBAOCAO,
+    layout: MainLayoutAdmin,
+    showInMenu: false,
+    private: true,
+    icon: null,
+  },
+  // kees toan
+  {
+    name: null,
+    path: BaseUrl.KeToanQLThanhToan,
+    component: KeToanQLThanhToan,
+    layout: MainLayoutAdmin,
+    showInMenu: false,
+    private: true,
+    icon: null,
+  },
+    {
+    name: null,
+    path: BaseUrl.KETOANDIDON,
+    component: KETOANDIDON,
     layout: MainLayoutAdmin,
     showInMenu: false,
     private: true,

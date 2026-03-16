@@ -115,7 +115,7 @@ export const searchEmployee = async (params: any) => {
 };
 
 export const editEmployee = async (id: number, body: any) => {
-  return axiosInstance.post(`/employee/update/${id}`, body);
+  return axiosInstance.post(`/employee/update/${id}/role`, body);
 };
 
 export const deleteEmployee = async (id: number) => {
@@ -178,6 +178,8 @@ export const exportPDF = async (orderCode: any) => {
   const res = await axiosInstance.get(`/export/bill/${orderCode}`);
   return res.data;
 };
+
+
 // nhà phân phối
 
 
@@ -243,7 +245,14 @@ export const viewMerProInfor = async () => {
   return res.data;
 };
 
-
+export const viewProStatus = async () => {
+  const res = await axiosInstance.get(`/payout/my`);
+  return res.data;
+};
+export const diDonProStatus = async (orderCode: any) => {
+  const res = await axiosInstance.post(`/payout/request?orderCode=${orderCode}`);
+  return res.data;
+};
 // màn nhân viên 
 
 export const viewInforPro = async () => {
@@ -251,3 +260,32 @@ export const viewInforPro = async () => {
   return res.data;
 };
 
+export const updateInforPro = async (body: any, orderCode: any) => {
+  const res = await axiosInstance.post(`/order/update/${orderCode}/status`, body);
+  return res.data;
+};
+
+export const baoCaoNV = async () => {
+  const res = await axiosInstance.get(`/product/statistic`);
+  return res.data;
+};
+
+export const NVTK = async () => {
+  const res = await axiosInstance.get(`/payments/statistic`);
+  return res.data;
+};
+
+// màn kế toán
+export const viewInvoice = async () => {
+  const res = await axiosInstance.get("/invoice/view");
+  return res.data;
+};
+export const searchInvoice = async (orderCode: any) => {
+  const res = await axiosInstance.get(`/invoice/search?orderCode=${orderCode}`);
+  return res.data;
+};
+
+export const viewInvoiceMerchant = async () => {
+  const res = await axiosInstance.get(`/payout/all`);
+  return res.data;
+};

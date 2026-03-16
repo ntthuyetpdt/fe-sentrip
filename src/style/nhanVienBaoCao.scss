@@ -1,0 +1,73 @@
+.nv-baocao-container {
+    margin-bottom: 24px;
+
+    .nv-stats-row {
+        margin-bottom: 24px;
+
+        .nv-stat-card {
+            height: 100%;
+
+            > .ant-card {
+                border-radius: 8px !important;
+                box-shadow: $card-shadow !important;
+                @include card-hover;
+
+                .ant-card-body {
+                    padding: 20px;
+                    display: flex;
+                    align-items: center;
+                    gap: 16px;
+                }
+            }
+
+            .nv-stat-icon {
+                font-size: 32px;
+                opacity: 0.85;
+                flex-shrink: 0;
+            }
+
+            .nv-stat-content {
+                flex: 1;
+            }
+
+            .nv-stat-label {
+                margin: 0 0 4px 0;
+                font-size: 14px;
+                font-weight: 500;
+                color: $text-color-secondary;
+            }
+
+            .nv-stat-value {
+                margin: 0;
+                font-size: 24px;
+                font-weight: 600;
+            }
+
+            /* Tổng doanh thu */
+            &--revenue > .ant-card {
+                @include statistic-card($color-revenue);
+
+                .nv-stat-icon {
+                    color: $color-revenue;
+                }
+
+                .nv-stat-value {
+                    color: $color-revenue;
+                }
+            }
+
+            /* Tổng giao dịch */
+            &--orders > .ant-card {
+                @include statistic-card($color-orders);
+
+                .nv-stat-icon {
+                    color: $color-orders;
+                }
+
+                .nv-stat-value {
+                    color: $color-orders;
+                }
+            }
+        }
+    }
+}

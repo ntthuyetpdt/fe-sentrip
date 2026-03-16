@@ -61,15 +61,11 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({
     try {
       const values = await form.validateFields();
 
-      const formattedValues: Employee = {
-        ...values,
-        JoinDate: values.JoinDate
-          ? values.JoinDate.format("YYYY-MM-DD")
-          : "",
-        img: data?.img || null,
+      const payload = {
+        role: values.Role,
       };
 
-      onSubmit?.(formattedValues);
+      onSubmit?.(payload as any);
     } catch (error) {
       console.log("Validate lỗi:", error);
     }
@@ -93,7 +89,7 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({
               name="mnv"
               rules={[{ required: false, message: "Nhập mã nhân viên" }]}
             >
-              <CommonInput disabled={isView} />
+              <CommonInput disabled />
             </Form.Item>
           </Col>
 
@@ -103,7 +99,7 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({
               name="fullName"
               rules={[{ required: false, message: "Nhập họ tên" }]}
             >
-              <CommonInput disabled={isView} />
+              <CommonInput disabled />
             </Form.Item>
           </Col>
           <Col span={12}>
@@ -142,13 +138,13 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({
             <Form.Item
               label="SĐT"
               name="phone"
-              rules={[
-                { required: false, message: "Nhập số điện thoại" },
-                {
-                  pattern: /^(0|\+84)[0-9]{9}$/,
-                  message: "SĐT không hợp lệ",
-                },
-              ]}
+            // rules={[
+            //   { required: false, message: "Nhập số điện thoại" },
+            //   {
+            //     pattern: /^(0|\+84)[0-9]{9}$/,
+            //     message: "SĐT không hợp lệ",
+            //   },
+            // ]}
             >
               <CommonInput disabled />
             </Form.Item>

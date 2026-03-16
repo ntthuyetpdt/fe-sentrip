@@ -7,9 +7,10 @@ import {
   DollarCircleOutlined,
   IdcardOutlined,
   LineChartOutlined,
+  ExportOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
-import { Breadcrumb, Layout, Menu, theme } from "antd";
+import { Breadcrumb, Layout, Menu, theme, Avatar, Dropdown, Space } from "antd";
 import { useNavigate, useLocation } from "react-router-dom";
 import Logo from "../../assets/logo.png";
 
@@ -67,7 +68,33 @@ const AdminLayout = ({ children, breadcrumb = [] }: AdminLayoutProps) => {
   const userProfile = JSON.parse(localStorage.getItem("user_profile") || "{}");
   const role = userProfile?.role;
 
-  // menu admin
+  /* ================= USER MENU ================= */
+
+  const userMenu: MenuProps["items"] = [
+    {
+      key: "profile",
+      label: "Trang cá nhân",
+    },
+    {
+      key: "logout",
+      label: "Đăng xuất",
+    },
+  ];
+
+  const handleUserMenu: MenuProps["onClick"] = ({ key }) => {
+    if (key === "profile") {
+      navigate("/profile");
+    }
+
+    if (key === "logout") {
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("user_profile");
+      navigate("/login");
+    }
+  };
+
+  /* ================= MENU ROLE ================= */
+
   const adminMenu: MenuItem[] = [
     { key: "admin", icon: <HomeOutlined />, label: "Trang ADMIN" },
     {
@@ -102,22 +129,20 @@ const AdminLayout = ({ children, breadcrumb = [] }: AdminLayoutProps) => {
     },
   ];
 
-  //menu nhan vien
   const employeeMenu: MenuItem[] = [
     { key: "admin", icon: <HomeOutlined />, label: "Trang nhân viên" },
-    // {
-    //   key: "customer",
-    //   icon: <UserOutlined />,
-    //   label: "Danh sách khách hàng",
-    // },
     {
       key: "nv_ql_infor_pro",
       icon: <IdcardOutlined />,
       label: "Danh sách đơn hàng",
     },
+    {
+      key: "NV_TrangThaiTien",
+      icon: <ExportOutlined />,
+      label: "Báo cáo và đối soát",
+    },
   ];
 
-  //menu nha phan phoi
   const supplierMenu: MenuItem[] = [
     { key: "admin", icon: <HomeOutlined />, label: "Trang nhà cung cấp" },
     {
@@ -132,7 +157,7 @@ const AdminLayout = ({ children, breadcrumb = [] }: AdminLayoutProps) => {
     },
     {
       key: "merchant_total",
-      icon: <DollarCircleOutlined />,
+      icon: <LineChartOutlined />,
       label: "Quản lí doanh thu",
     },
     {
@@ -140,9 +165,13 @@ const AdminLayout = ({ children, breadcrumb = [] }: AdminLayoutProps) => {
       icon: <DollarCircleOutlined />,
       label: "Quản lí doanh thu sản phẩm",
     },
+    {
+      key: "merchant_TrangThaiTien",
+      icon: <ExportOutlined />,
+      label: "Báo cáo và đối soát",
+    },
   ];
 
-  //menu ke toan
   const accountantMenu: MenuItem[] = [
     { key: "admin", icon: <HomeOutlined />, label: "Trang kế toán" },
     {
@@ -150,34 +179,36 @@ const AdminLayout = ({ children, breadcrumb = [] }: AdminLayoutProps) => {
       icon: <ShoppingCartOutlined />,
       label: "Quản lý thanh toán",
     },
+    {
+      key: "pay",
+      icon: <ExportOutlined />,
+      label: "Đi đơn cho NPP",
+    },
   ];
 
-
   const menuMap: Record<string, string> = {
-    //admin router
     admin: "/admin",
     account: "/admin/tai-khoan-va-phan-quyen",
     addAccount: "/admin/them-tai-khoan",
     accountCutomer: "/admin/tai-khoan-khach-hang",
     accountMerchant: "/admin/tai-khoan-nha-phan-phoi",
     adminDoanhThu: "/admin/doanh-thu",
-    //nha phan phoi router
+
     merchant: "/merchant/quan-li-infor",
     merchant_product: "/merchant/quan-li-san-pham",
     merchant_total: "/merchant/quan-li-doanh-thu",
     merchant_total_pro: "/merchant/quan-li-doanh-thu-san-pham",
-    //customer router
+    merchant_TrangThaiTien: "/merchant/bao-cao",
+
     customer: "/admin/khach-hang",
     orders: "/admin/don-hang",
-    payments: "/admin/thanh-toan",
 
-    // nhan vien router
-    nv_ql_infor_pro: "/employee/ql-infor-pro"
+    nv_ql_infor_pro: "/employee/ql-infor-pro",
+    NV_TrangThaiTien: "/employee/bao-cao",
 
-
+    payments: "/ke-toan/thanh-toan",
+    pay: "/ke-toan/di-don",
   };
-
-
 
   const menuByRole: Record<string, MenuItem[]> = {
     ADMIN: adminMenu,
@@ -188,19 +219,16 @@ const AdminLayout = ({ children, breadcrumb = [] }: AdminLayoutProps) => {
 
   const menuItems = menuByRole[role] || [];
 
-
-
   const selectedKey =
     Object.entries(menuMap)
       .sort((a, b) => b[1].length - a[1].length)
       .find(([_, path]) => location.pathname.startsWith(path))
-    ?.[0] || "admin";
-
+      ?.[0] || "admin";
 
   const headerTitleMap: Record<string, string> = {
     ADMIN: "Admin",
     EMPLOYEE: "Nhân viên",
-    SUPPLIER: "Nhà cung cấp",
+    MERCHANT: "Nhà cung cấp",
     ACCOUNTANT: "Kế toán",
   };
 
@@ -216,7 +244,7 @@ const AdminLayout = ({ children, breadcrumb = [] }: AdminLayoutProps) => {
         onCollapse={setCollapsed}
         className="admin-sider"
       >
-        <div className="admin-logo" onClick={() => navigate('/')}>
+        <div className="admin-logo" onClick={() => navigate("/admin")}>
           <img src={Logo} alt="logo" />
         </div>
 
@@ -239,9 +267,21 @@ const AdminLayout = ({ children, breadcrumb = [] }: AdminLayoutProps) => {
           style={{
             background: colorBgContainer,
             fontWeight: 600,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
-          {headerTitle}
+          <div>{headerTitle}</div>
+
+          <Dropdown
+            menu={{ items: userMenu, onClick: handleUserMenu }}
+            trigger={["hover"]}
+          >
+            <Space style={{ cursor: "pointer" }}>
+              <Avatar icon={<UserOutlined />} />
+            </Space>
+          </Dropdown>
         </Header>
 
         <Content className="admin-content-wrapper">
