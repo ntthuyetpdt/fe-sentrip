@@ -21,27 +21,43 @@ export interface OrderInfor {
 }
 
 const STATUS_OPTIONS = [
-  { value: "PENDING",           label: "Chờ xác nhận" },
-  { value: "PENDING_PAYMENT",   label: "Chờ thanh toán" },
-  { value: "CONFIRM",           label: "Đã xác nhận" },
-  { value: "CONFIRMED",         label: "Đã xác nhận (confirmed)" },
-  { value: "PAID",              label: "Đã thanh toán" },
-  { value: "COMPLETED",         label: "Hoàn thành" },
-  { value: "CANCELLED",         label: "Hủy vé" },
-  { value: "REFUND_REQUESTED",  label: "Yêu cầu hoàn vé" },
-  { value: "REFUNDED",          label: "Hoàn tiền" },
+  { value: "PENDING", label: "Chờ xác nhận" },
+  { value: "PENDING_PAYMENT", label: "Chờ thanh toán" },
+  { value: "CONFIRM", label: "Đã xác nhận" },
+  { value: "CONFIRMED", label: "Đã xác nhận" },
+  { value: "PAID", label: "Đã thanh toán" },
+  { value: "COMPLETED", label: "Hoàn thành" },
+  { value: "CANCELLED", label: "Hủy vé" },
+  { value: "REFUND_REQUESTED", label: "Yêu cầu hoàn vé" },
+  { value: "REFUNDED", label: "Hoàn tiền" },
 ];
 
 const STATUS_COLOR: Record<string, string> = {
-  PENDING:          "#faad14",
-  PENDING_PAYMENT:  "#1677ff",
-  CONFIRM:          "#13c2c2",
-  CONFIRMED:        "#13c2c2",
-  PAID:             "#52c41a",
-  COMPLETED:        "#237804",
-  CANCELLED:        "#ff4d4f",
+  PENDING: "#faad14",
+  PENDING_PAYMENT: "#1677ff",
+  CONFIRM: "#13c2c2",
+  CONFIRMED: "#13c2c2",
+  PAID: "#52c41a",
+  COMPLETED: "#237804",
+  CANCELLED: "#ff4d4f",
   REFUND_REQUESTED: "#fa8c16",
-  REFUNDED:         "#722ed1",
+  REFUNDED: "#722ed1",
+};
+
+const PAYMENT_STATUS_OPTIONS = [
+  { value: "PENDING", label: "Chờ xử lý" },
+  { value: "WAITING_FOR_PAYMENT", label: "Chờ thanh toán" },
+  { value: "SUCCESS", label: "Thành công" },
+  { value: "FAILED", label: "Thất bại" },
+  { value: "CANCELED", label: "Đã hủy" },
+];
+
+const PAYMENT_STATUS_COLOR: Record<string, string> = {
+  PENDING: "#faad14",
+  WAITING_FOR_PAYMENT: "#1677ff",
+  SUCCESS: "#52c41a",
+  FAILED: "#ff4d4f",
+  CANCELED: "#8c8c8c",
 };
 
 const InforPro = () => {
@@ -66,9 +82,12 @@ const InforPro = () => {
   const [filterStatus, setFilterStatus] = useState<string | undefined>(undefined);
 
   // --- Filtered data (computed from raw data + filter state) ---
+  const user_profile = JSON.parse(localStorage.getItem("user_profile") || "{}");
+  const role = user_profile.role;
+
   const filteredData = useMemo(() => {
     return data.filter((item) => {
-      // Filter by order code (case-insensitive partial match)
+      // Filter mã đơn
       if (
         filterOrderCode.trim() &&
         !item.orderCode.toLowerCase().includes(filterOrderCode.trim().toLowerCase())
@@ -76,19 +95,19 @@ const InforPro = () => {
         return false;
       }
 
-      // Filter by price min
-      if (priceMin !== "" && !isNaN(Number(priceMin))) {
-        if (item.totalAmount < Number(priceMin)) return false;
+      // Filter khoảng giá: nếu có lọc giá mà item không có giá thì loại bỏ
+      const hasPriceFilter = priceMin !== "" || priceMax !== "";
+      if (hasPriceFilter) {
+        if (item.totalAmount === null || item.totalAmount === undefined) return false;
+        if (priceMin !== "" && !isNaN(Number(priceMin)) && item.totalAmount < Number(priceMin)) return false;
+        if (priceMax !== "" && !isNaN(Number(priceMax)) && item.totalAmount > Number(priceMax)) return false;
       }
 
-      // Filter by price max
-      if (priceMax !== "" && !isNaN(Number(priceMax))) {
-        if (item.totalAmount > Number(priceMax)) return false;
-      }
-
-      // Filter by status
-      if (filterStatus && item.orderStatus !== filterStatus) {
-        return false;
+      // Filter trạng thái đơn: CONFIRM = đã xác nhận, UNCONFIRMED = chưa xác nhận
+      if (filterStatus === "CONFIRM") {
+        if (item.orderStatus !== "CONFIRM" && item.orderStatus !== "CONFIRMED") return false;
+      } else if (filterStatus === "UNCONFIRMED") {
+        if (item.orderStatus === "CONFIRM" || item.orderStatus === "CONFIRMED") return false;
       }
 
       return true;
@@ -103,7 +122,6 @@ const InforPro = () => {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    // Allow filtering on Enter key press (already reactive via useMemo, but good UX)
     if (e.key === "Escape") {
       setPriceMin("");
       setPriceMax("");
@@ -232,7 +250,7 @@ const InforPro = () => {
       render: (date: string) => new Date(date).toLocaleString("vi-VN"),
     },
     {
-      title: "Trạng thái",
+      title: "Trạng thái đơn",
       dataIndex: "orderStatus",
       render: (status: string) => {
         const label = STATUS_OPTIONS.find((s) => s.value === status)?.label || status;
@@ -240,6 +258,26 @@ const InforPro = () => {
           <span
             style={{
               color: STATUS_COLOR[status] || "#000",
+              fontWeight: 600,
+              whiteSpace: "nowrap",
+            }}
+          >
+            {label}
+          </span>
+        );
+      },
+    },
+    {
+      title: "Trạng thái thanh toán",
+      dataIndex: "paymentStatus",
+      render: (status: string | null) => {
+        if (!status) return <span style={{ color: "#8c8c8c" }}>Chưa có</span>;
+        const label =
+          PAYMENT_STATUS_OPTIONS.find((s) => s.value === status)?.label || status;
+        return (
+          <span
+            style={{
+              color: PAYMENT_STATUS_COLOR[status] || "#000",
               fontWeight: 600,
               whiteSpace: "nowrap",
             }}
@@ -271,11 +309,20 @@ const InforPro = () => {
             }}
             title="Xuất PDF"
           />
-          <EditOutlined
-            style={{ color: "#1677ff", cursor: "pointer", fontSize: 16 }}
-            onClick={() => openUpdateModal(record)}
-            title="Cập nhật trạng thái"
-          />
+          {/* {role !== "ADMIN" || record.paymentStatus !== "SUCCESS" && (
+            <EditOutlined
+              style={{ color: "#1677ff", cursor: "pointer", fontSize: 16 }}
+              onClick={() => openUpdateModal(record)}
+              title="Cập nhật trạng thái"
+            />
+          )} */}
+          {role !== "ADMIN" && record.paymentStatus === "SUCCESS" && (
+            <EditOutlined
+              style={{ color: "#1677ff", cursor: "pointer", fontSize: 16 }}
+              onClick={() => openUpdateModal(record)}
+              title="Cập nhật trạng thái"
+            />
+          )}
         </Space>
       ),
     },
@@ -350,23 +397,33 @@ const InforPro = () => {
 
         <div className={styles.filterDivider} />
 
-        {/* Filter: Trạng thái */}
+        {/* Filter: Trạng thái đơn */}
         <div className={styles.filterGroup}>
-          <span className={styles.filterLabel}>Trạng thái</span>
+          <span className={styles.filterLabel}>Trạng thái đơn</span>
           <Select
             allowClear
             placeholder="Tất cả trạng thái"
             value={filterStatus}
             onChange={(val) => setFilterStatus(val)}
             style={{ width: 210, height: 36 }}
-            options={STATUS_OPTIONS.map((s) => ({
-              value: s.value,
-              label: (
-                <span style={{ color: STATUS_COLOR[s.value], fontWeight: 600 }}>
-                  {s.label}
-                </span>
-              ),
-            }))}
+            options={[
+              {
+                value: "CONFIRM",
+                label: (
+                  <span style={{ color: STATUS_COLOR["CONFIRM"], fontWeight: 600 }}>
+                    Đã xác nhận
+                  </span>
+                ),
+              },
+              {
+                value: "UNCONFIRMED",
+                label: (
+                  <span style={{ color: "#faad14", fontWeight: 600 }}>
+                    Chưa xác nhận
+                  </span>
+                ),
+              },
+            ]}
           />
         </div>
 
@@ -429,14 +486,16 @@ const InforPro = () => {
           style={{ width: "100%" }}
           value={newStatus}
           onChange={(val) => setNewStatus(val)}
-          options={STATUS_OPTIONS.map((s) => ({
-            value: s.value,
-            label: (
-              <span style={{ color: STATUS_COLOR[s.value], fontWeight: 600 }}>
-                {s.label}
-              </span>
-            ),
-          }))}
+          options={STATUS_OPTIONS
+            .filter((s) => s.value === "CONFIRM")
+            .map((s) => ({
+              value: s.value,
+              label: (
+                <span style={{ color: STATUS_COLOR[s.value], fontWeight: 600 }}>
+                  {s.label}
+                </span>
+              ),
+            }))}
         />
       </Modal>
     </div>

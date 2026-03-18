@@ -17,7 +17,10 @@ const AddAcc = () => {
             message.error("Vui lòng nhập email");
             return;
         }
-
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(gmail)) {
+            message.error("Email không hợp lệ");
+            return;
+        }
         if (!role) {
             message.error("Vui lòng chọn role");
             return;

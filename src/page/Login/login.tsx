@@ -5,7 +5,7 @@ import { message } from "antd";
 import { authLogin } from "../../api/auth";
 import { useNavigate } from "react-router-dom";
 import { getProfile } from "../../api/api";
-import { stringify } from "querystring";
+import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
 
 interface LoginProps {
   onClose?: () => void;
@@ -17,10 +17,15 @@ const Login: React.FC<LoginProps> = ({ onRegister, router }) => {
   const [gmail, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { t } = useTranslation();
   const navigate = useNavigate();
   const allowRoles = ["ADMIN", "EMPLOYEE", "MERCHANT", "ACCOUNTANT"];
-  
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") handleLogin();
+  };
+
   const handleLogin = async () => {
     if (!gmail || !password) {
       message.warning("Please enter email and password");
@@ -29,10 +34,7 @@ const Login: React.FC<LoginProps> = ({ onRegister, router }) => {
 
     try {
       setLoading(true);
-      const loginRes = await authLogin({
-        gmail,
-        password,
-      });
+      const loginRes = await authLogin({ gmail, password });
 
       if (loginRes.status !== "ok") {
         message.error(loginRes.message || "Login failed");
@@ -43,13 +45,10 @@ const Login: React.FC<LoginProps> = ({ onRegister, router }) => {
       localStorage.setItem("access_token", token);
 
       const profileRes = await getProfile();
-
       if (profileRes.code === 200) {
-        localStorage.setItem(
-          "user_profile",
-          JSON.stringify(profileRes.data)
-        );
+        localStorage.setItem("user_profile", JSON.stringify(profileRes.data));
       }
+
       message.success("Login success");
 
       const user_profile = JSON.parse(localStorage.getItem("user_profile") || "{}");
@@ -58,16 +57,10 @@ const Login: React.FC<LoginProps> = ({ onRegister, router }) => {
       if (allowRoles.includes(role)) {
         navigate(`/admin`);
       } else {
-        console.log(role);
-        if (role == "CUSTOME")
-          navigate(`/`);
+        if (role === "CUSTOME") navigate(`/`);
       }
-
-
     } catch (error: any) {
-      message.error(
-        error?.response?.data?.message || "Login failed"
-      );
+      message.error(error?.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
     }
@@ -83,16 +76,25 @@ const Login: React.FC<LoginProps> = ({ onRegister, router }) => {
           placeholder={t("Email") as string}
           value={gmail}
           onChange={(e) => setUsername(e.target.value)}
+          onKeyDown={handleKeyDown}
         />
       </div>
 
-      <div className="auth__field">
+      <div className="auth__field auth__field--password">
         <input
-          type="password"
+          type={showPassword ? "text" : "password"}
           placeholder={t("PassWord") as string}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          onKeyDown={handleKeyDown}
         />
+        <span
+          className="auth__eye"
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => setShowPassword((prev) => !prev)}
+        >
+          {showPassword ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+        </span>
       </div>
 
       <ButtonCustom
@@ -103,7 +105,7 @@ const Login: React.FC<LoginProps> = ({ onRegister, router }) => {
       />
 
       <div className="auth__footer">
-        <span>{t("Don’t have an account?")}</span>
+        <span>{t("Don't have an account?")}</span>
         <span className="auth__link" onClick={onRegister}>
           {t("Register")}
         </span>

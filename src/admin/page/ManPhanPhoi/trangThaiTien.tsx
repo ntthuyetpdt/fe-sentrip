@@ -424,7 +424,7 @@ const KiemTraTrangThaiDon = () => {
                     <Space>
                         <Popconfirm
                             title="Xác nhận đi tiền?"
-                            description="Yêu cầu đi tiền đến kế toán"
+                            description="Yêu cầu thanh toán"
                             okText="Xác nhận"
                             cancelText="Hủy"
                             disabled={!canPay || isDispatching}

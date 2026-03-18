@@ -178,7 +178,7 @@ const AdminLayout = ({ children, breadcrumb = [] }: AdminLayoutProps) => {
     {
       key: "payments",
       icon: <ShoppingCartOutlined />,
-      label: "Quản lý thanh toán",
+      label: "Quản lý đơn hàng",
     },
     {
       key: "pay",

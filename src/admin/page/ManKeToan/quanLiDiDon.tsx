@@ -182,8 +182,8 @@ const GetMerchantDiTien: React.FC = () => {
             render: (_: unknown, record: MerchantPayout) => (
                 <Space>
                     <BtnCustom
-                        text="Đi đơn"
-                        disabled={record.status !== "PAID"}
+                        text="Thanh toán"
+                        disabled={record.status === "PAID"}
                         onClick={() => openUploadModal(record.id)}
                     />
                 </Space>

@@ -16,6 +16,28 @@ import ButtonCustom from "../../components/custom/button";
 import { confirmPay, getDetails, getQr } from "../../api/api";
 import ModalCustom from "../../components/custom/modal";
 
+const getQrImage = async (lastUrl: any, token: any) => {
+    try {
+        const res = await fetch(lastUrl, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        if (!res.ok) {
+            throw new Error("Lỗi khi gọi API QR");
+        }
+
+        const blob = await res.blob();
+        const imageUrl = URL.createObjectURL(blob);
+
+        return imageUrl;
+    } catch (err) {
+        console.error(err);
+        return null;
+    }
+};
 const DetailsVe = () => {
     const { id } = useParams();
     const [loading, setLoading] = useState(true);
@@ -60,21 +82,27 @@ const DetailsVe = () => {
     };
 
     const getQrt = async () => {
-        setOpenModal(true)
+        setOpenModal(true);
+
         try {
             setLoadingQr(true);
+
             const body = {
-                "orderCode": id
-            }
-            const request = await getQr(
-                body
-            );
-            const res = request.data
-            setQrParam(res.paymentUrl)
-            const lastUrl = fixUrl(res.qrUrl)
-            setQrImage(lastUrl);
+                orderCode: id,
+            };
+
+            const request = await getQr(body);
+            const res = request.data;
+
+            setQrParam(res.paymentUrl);
+
+            const lastUrl = fixUrl(res.qrUrl);
+            const token = localStorage.getItem("access_token");
+            const imageUrl = await getQrImage(lastUrl, token);
+            setQrImage(imageUrl);
 
         } catch (error) {
+            console.error(error);
         } finally {
             setLoadingQr(false);
         }

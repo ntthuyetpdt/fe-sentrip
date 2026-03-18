@@ -30,9 +30,16 @@ const Register: React.FC<RegisterProps> = ({
 
   const isUser = mode === "user";
 
+  const isValidEmail = (value: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
   const handleRegister = async () => {
     if (!email || !password || !confirmPassword) {
       message.warning("Vui lòng nhập đầy đủ thông tin");
+      return;
+    }
+    if (!isValidEmail(email)) {
+      message.warning("Email không hợp lệ");
       return;
     }
     if (password !== confirmPassword) {
@@ -104,7 +111,6 @@ const Register: React.FC<RegisterProps> = ({
         />
       </div>
 
-      {/* Chỉ hiện khi là nhà cung cấp */}
       {!isUser && (
         <div className="auth__field">
           <input
@@ -131,9 +137,9 @@ const Register: React.FC<RegisterProps> = ({
       </div>
 
       <div className="auth__footer">
-        <span>{isUser ? "Bạn có muốn đăng kí làm nhà cung cấp?" : "Bạn là người dùng?"}</span>
+        <span>{isUser ? "Bạn có muốn đăng kí làm nhà cung cấp?" : "Bạn là khách hàng?"}</span>
         <span className="auth__link" onClick={handleSwitchMode}>
-          {isUser ? "Đăng kí nhà cung cấp" : "Đăng kí người dùng"}
+          {isUser ? "Đăng kí nhà cung cấp" : "Đăng kí khách hàng"}
         </span>
       </div>
     </div>

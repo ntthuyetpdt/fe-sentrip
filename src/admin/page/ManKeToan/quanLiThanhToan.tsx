@@ -28,9 +28,22 @@ const TIME_OPTIONS = [
 ];
 
 const STATUS_OPTIONS = [
-  { value: "PAID",   label: "Đã thanh toán",   color: "#52c41a" },
-  { value: "UNPAID", label: "Chưa thanh toán",  color: "#ff4d4f" },
+  { value: "UNPAID",                 label: "Chưa thanh toán",       color: "#ff4d4f" },
+  { value: "INVOICE_HAS_BEEN_ISSUED", label: "Đã xuất hóa đơn",      color: "#1677ff" },
+  { value: "GENERATED",              label: "Đã tạo hóa đơn",        color: "#52c41a" },
 ];
+
+const STATUS_COLOR: Record<string, string> = {
+  UNPAID:                  "#ff4d4f",
+  INVOICE_HAS_BEEN_ISSUED: "#1677ff",
+  GENERATED:               "#52c41a",
+};
+
+const STATUS_LABEL: Record<string, string> = {
+  UNPAID:                  "Chưa thanh toán",
+  INVOICE_HAS_BEEN_ISSUED: "Đã xuất hóa đơn",
+  GENERATED:               "Đã tạo hóa đơn",
+};
 
 const GetHoaDon = () => {
   const [originData, setOriginData] = useState<Invoice[]>([]);
@@ -77,11 +90,7 @@ const GetHoaDon = () => {
         return false;
 
       // Trạng thái
-      if (filterStatus) {
-        const isPaid = item.status === "PAID";
-        if (filterStatus === "PAID" && !isPaid) return false;
-        if (filterStatus === "UNPAID" && isPaid) return false;
-      }
+      if (filterStatus && item.status !== filterStatus) return false;
 
       // Thời gian
       if (timeFilter !== "ALL") {
@@ -192,11 +201,15 @@ const GetHoaDon = () => {
     {
       title: "Trạng thái",
       dataIndex: "status",
-      render: (status: string) => (
-        <Tag color={status === "PAID" ? "green" : "red"}>
-          {status === "PAID" ? "Đã thanh toán" : "Chưa thanh toán"}
-        </Tag>
-      ),
+      render: (status: string) => {
+        const label = STATUS_LABEL[status] || status;
+        const color = STATUS_COLOR[status] || "default";
+        return (
+          <Tag color={color === "#ff4d4f" ? "red" : color === "#1677ff" ? "blue" : "green"}>
+            {label}
+          </Tag>
+        );
+      },
     },
     {
       title: "Ngày tạo",
@@ -293,7 +306,7 @@ const GetHoaDon = () => {
             placeholder="Tất cả"
             value={filterStatus}
             onChange={(val) => setFilterStatus(val)}
-            style={{ width: 180, height: 36 }}
+            style={{ width: 200, height: 36 }}
             options={STATUS_OPTIONS.map((s) => ({
               value: s.value,
               label: <span style={{ color: s.color, fontWeight: 600 }}>{s.label}</span>,
