@@ -113,14 +113,14 @@ const ProductModal: React.FC<ProductModalProps> = ({
             </Form.Item>
           </Col>
 
-          <Col span={12}>
+          {/* <Col span={12}>
             <Form.Item label="Hoàn tiền" name="refundable">
               <Select disabled={isView}>
                 <Select.Option value={1}>Có</Select.Option>
                 <Select.Option value={0}>Không</Select.Option>
               </Select>
             </Form.Item>
-          </Col>
+          </Col> */}
 
           <Col span={24}>
             <Form.Item label="Địa chỉ" name="address">

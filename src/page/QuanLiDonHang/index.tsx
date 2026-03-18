@@ -45,9 +45,9 @@ const TAB_ITEMS = [
   { key: "confirmed", label: "Đã xác nhận" },
   { key: "paid", label: "Đã thanh toán" },
   { key: "completed", label: "Hoàn thành" },
-  { key: "cancelled", label: "Đã hủy" },
-  { key: "refund_requested", label: "Yêu cầu hoàn vé" },
-  { key: "refunded", label: "Đã hoàn tiền" },
+  // { key: "cancelled", label: "Đã hủy" },
+  // { key: "refund_requested", label: "Yêu cầu hoàn vé" },
+  // { key: "refunded", label: "Đã hoàn tiền" },
 ];
 
 const QuanLiDonHang = () => {

@@ -68,7 +68,7 @@ const AdminLayout = ({ children, breadcrumb = [] }: AdminLayoutProps) => {
   const userProfile = JSON.parse(localStorage.getItem("user_profile") || "{}");
   const role = userProfile?.role;
 
-  /* ================= USER MENU ================= */
+
 
   const userMenu: MenuProps["items"] = [
     {
@@ -93,7 +93,7 @@ const AdminLayout = ({ children, breadcrumb = [] }: AdminLayoutProps) => {
     }
   };
 
-  /* ================= MENU ROLE ================= */
+
 
   const adminMenu: MenuItem[] = [
     { key: "admin", icon: <HomeOutlined />, label: "Trang ADMIN" },
@@ -115,7 +115,7 @@ const AdminLayout = ({ children, breadcrumb = [] }: AdminLayoutProps) => {
     {
       key: "accountMerchant",
       icon: <UserOutlined />,
-      label: "Tài khoản nhà phân phối",
+      label: "Tài khoản nhà cung cấp",
     },
     {
       key: "adminDoanhThu",
@@ -155,11 +155,7 @@ const AdminLayout = ({ children, breadcrumb = [] }: AdminLayoutProps) => {
       icon: <ShoppingCartOutlined />,
       label: "Quản lí dịch vụ",
     },
-    {
-      key: "merchant_total",
-      icon: <LineChartOutlined />,
-      label: "Quản lí doanh thu",
-    },
+
     {
       key: "merchant_total_pro",
       icon: <DollarCircleOutlined />,
@@ -168,7 +164,12 @@ const AdminLayout = ({ children, breadcrumb = [] }: AdminLayoutProps) => {
     {
       key: "merchant_TrangThaiTien",
       icon: <ExportOutlined />,
-      label: "Báo cáo và đối soát",
+      label: "Trạng thái thanh toán của đơn hàng",
+    },
+    {
+      key: "merchant_total",
+      icon: <LineChartOutlined />,
+      label: "Quản lí doanh thu",
     },
   ];
 
@@ -223,7 +224,7 @@ const AdminLayout = ({ children, breadcrumb = [] }: AdminLayoutProps) => {
     Object.entries(menuMap)
       .sort((a, b) => b[1].length - a[1].length)
       .find(([_, path]) => location.pathname.startsWith(path))
-      ?.[0] || "admin";
+    ?.[0] || "admin";
 
   const headerTitleMap: Record<string, string> = {
     ADMIN: "Admin",

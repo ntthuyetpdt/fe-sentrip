@@ -165,14 +165,14 @@ const GetDoanhThuProModal: React.FC<Props> = ({
                 </Form.Item>
               </Col>
 
-              <Col span={12}>
+              {/* <Col span={12}>
                 <Form.Item label="Hoàn tiền">
                   <CommonInput
                     value={detail.refundable === 1 ? "Có" : "Không"}
                     disabled
                   />
                 </Form.Item>
-              </Col>
+              </Col> */}
             </Row>
           </Form>
         </>

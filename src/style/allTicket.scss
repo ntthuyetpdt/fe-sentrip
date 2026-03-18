@@ -120,3 +120,28 @@
   align-items: center;
   justify-content: center;
 }
+.price-range-box {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 8px;
+}
+
+.price-range-box .price-input {
+    border: none;
+    outline: none;
+    width: 100%;
+    background: transparent;
+}
+
+/* Ẩn mũi tên spin của input number */
+.price-input::-webkit-outer-spin-button,
+.price-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.price-separator {
+    color: #999;
+    flex-shrink: 0;
+}

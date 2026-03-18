@@ -23,6 +23,7 @@ interface Product {
 
 const AllTicket = () => {
     const [products, setProducts] = useState<Product[]>([]);
+    const [allProducts, setAllProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(false);
 
     const [open, setOpen] = useState(false);
@@ -31,7 +32,9 @@ const AllTicket = () => {
 
     const [productName, setProductName] = useState("");
     const [address, setAddress] = useState("");
-    const [priceTK, setPriceTK] = useState("")
+    const [priceMin, setPriceMin] = useState("");
+    const [priceMax, setPriceMax] = useState("");
+
     useEffect(() => {
         fetchProducts();
     }, []);
@@ -40,7 +43,9 @@ const AllTicket = () => {
         try {
             setLoading(true);
             const res = await viewProduct();
-            setProducts(res.data || res);
+            const data = res.data || res;
+            setAllProducts(data);
+            setProducts(data);
         } catch (error) {
             console.error("Lỗi khi gọi viewProduct:", error);
         } finally {
@@ -51,33 +56,53 @@ const AllTicket = () => {
     const handleAddCart = async () => {
         const body = {
             productId: selectedProduct?.id,
-            quantity: quantity
-        }
+            quantity: quantity,
+        };
         try {
-            await addCart(body)
-            message.success('Thêm vào giỏ hàng thành công!')
+            await addCart(body);
+            message.success("Thêm vào giỏ hàng thành công!");
             window.location.href = "/my-cart";
         } catch (error) {
-            message.error('Thêm vào giỏ hàng thất bại!')
+            message.error("Thêm vào giỏ hàng thất bại!");
         }
-    }
+    };
 
     const handleSearch = async () => {
         try {
             setLoading(true);
 
-            if (!productName && !address && !priceTK) {
-                fetchProducts();
-                return;
-            }
+            const minVal = priceMin !== "" ? Number(priceMin) : 0;
+            const maxVal = priceMax !== "" ? Number(priceMax) : Infinity;
 
-            const res = await searchProduct(productName, address, priceTK);
-            setProducts(res.data || res);
+            if (productName || address) {
+                const res = await searchProduct(productName, address, "");
+                const data = res.data || res;
+
+                const filtered = data.filter((p: Product) => {
+                    const numPrice = Number(p.price);
+                    return numPrice >= minVal && numPrice <= maxVal;
+                });
+
+                setProducts(filtered);
+            } else {
+                const filtered = allProducts.filter((p) => {
+                    const numPrice = Number(p.price);
+                    return numPrice >= minVal && numPrice <= maxVal;
+                });
+
+                setProducts(filtered);
+            }
 
         } catch (error) {
             message.error("Lỗi tìm kiếm");
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            handleSearch();
         }
     };
 
@@ -95,14 +120,12 @@ const AllTicket = () => {
     };
 
     const handleDecrease = () => {
-
         if (quantity > 1) {
             setQuantity((prev) => prev - 1);
         }
     };
 
     const handleOrder = async () => {
-
         if (!selectedProduct) return;
 
         const body = {
@@ -143,6 +166,7 @@ const AllTicket = () => {
                         placeholder="Tìm tên vé"
                         value={productName}
                         onChange={(e) => setProductName(e.target.value)}
+                        onKeyDown={handleKeyDown}
                     />
 
                     <input
@@ -151,15 +175,28 @@ const AllTicket = () => {
                         placeholder="Tìm địa chỉ"
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
+                        onKeyDown={handleKeyDown}
                     />
 
-                    <input
-                        className="search-input-address"
-                        type="text"
-                        placeholder="Mức giá"
-                        value={priceTK}
-                        onChange={(e) => setPriceTK(e.target.value)}
-                    />
+                    <div className="search-input-address price-range-box">
+                        <input
+                            className="price-input"
+                            type="number"
+                            placeholder="Từ"
+                            value={priceMin}
+                            onChange={(e) => setPriceMin(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
+                        <span className="price-separator">—</span>
+                        <input
+                            className="price-input"
+                            type="number"
+                            placeholder="Đến"
+                            value={priceMax}
+                            onChange={(e) => setPriceMax(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
+                    </div>
 
                     <ButtonCustom
                         className="btn-search-QLDH"

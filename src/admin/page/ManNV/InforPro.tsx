@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import CommonTable from "../../../components/custom/table";
 import { viewInforPro, exportExcel, exportPDF, updateInforPro } from "../../../api/api";
 
@@ -6,6 +6,7 @@ import { EyeOutlined, FileExcelOutlined, FilePdfOutlined, EditOutlined } from "@
 import { Space, Button, message, Select, Modal } from "antd";
 
 import NVInforPro from "../../components/NVInforPro";
+import styles from "./InforPro.module.scss";
 
 export interface OrderInfor {
   orderCode: string;
@@ -57,6 +58,57 @@ const InforPro = () => {
   const [selectedForUpdate, setSelectedForUpdate] = useState<OrderInfor | null>(null);
   const [newStatus, setNewStatus] = useState<string>("");
   const [updatingStatus, setUpdatingStatus] = useState(false);
+
+  // --- Filter state ---
+  const [filterOrderCode, setFilterOrderCode] = useState("");
+  const [priceMin, setPriceMin] = useState("");
+  const [priceMax, setPriceMax] = useState("");
+  const [filterStatus, setFilterStatus] = useState<string | undefined>(undefined);
+
+  // --- Filtered data (computed from raw data + filter state) ---
+  const filteredData = useMemo(() => {
+    return data.filter((item) => {
+      // Filter by order code (case-insensitive partial match)
+      if (
+        filterOrderCode.trim() &&
+        !item.orderCode.toLowerCase().includes(filterOrderCode.trim().toLowerCase())
+      ) {
+        return false;
+      }
+
+      // Filter by price min
+      if (priceMin !== "" && !isNaN(Number(priceMin))) {
+        if (item.totalAmount < Number(priceMin)) return false;
+      }
+
+      // Filter by price max
+      if (priceMax !== "" && !isNaN(Number(priceMax))) {
+        if (item.totalAmount > Number(priceMax)) return false;
+      }
+
+      // Filter by status
+      if (filterStatus && item.orderStatus !== filterStatus) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [data, filterOrderCode, priceMin, priceMax, filterStatus]);
+
+  const handleResetFilters = () => {
+    setFilterOrderCode("");
+    setPriceMin("");
+    setPriceMax("");
+    setFilterStatus(undefined);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Allow filtering on Enter key press (already reactive via useMemo, but good UX)
+    if (e.key === "Escape") {
+      setPriceMin("");
+      setPriceMax("");
+    }
+  };
 
   const handleExportExcel = async () => {
     try {
@@ -130,7 +182,6 @@ const InforPro = () => {
 
       message.success("Cập nhật trạng thái thành công!");
 
-      // Cập nhật lại data local, không cần gọi lại API
       setData((prev) =>
         prev.map((item) =>
           item.orderCode === selectedForUpdate.orderCode
@@ -248,23 +299,104 @@ const InforPro = () => {
     fetchData();
   }, []);
 
+  const hasActiveFilters =
+    filterOrderCode.trim() !== "" ||
+    priceMin !== "" ||
+    priceMax !== "" ||
+    filterStatus !== undefined;
+
   return (
     <div>
-      <div style={{ marginBottom: 16, display: "flex", justifyContent: "flex-end" }}>
-        <Button
-          type="primary"
-          icon={<FileExcelOutlined />}
-          loading={exportingExcel}
-          onClick={handleExportExcel}
-          style={{ backgroundColor: "#217346", borderColor: "#217346" }}
-        >
-          Xuất Excel
-        </Button>
+      {/* ── Filter bar ── */}
+      <div className={styles.filterBar}>
+
+        {/* Filter: Mã đơn */}
+        <div className={styles.filterGroup}>
+          <span className={styles.filterLabel}>Mã đơn</span>
+          <input
+            className={styles.filterInput}
+            type="text"
+            placeholder="Tìm mã đơn..."
+            value={filterOrderCode}
+            onChange={(e) => setFilterOrderCode(e.target.value)}
+          />
+        </div>
+
+        <div className={styles.filterDivider} />
+
+        {/* Filter: Khoảng giá */}
+        <div className={styles.filterGroup}>
+          <span className={styles.filterLabel}>Khoảng giá (đ)</span>
+          <div className={styles.priceRangeBox}>
+            <input
+              className={styles.priceInput}
+              type="number"
+              placeholder="Từ"
+              value={priceMin}
+              onChange={(e) => setPriceMin(e.target.value)}
+              onKeyDown={handleKeyDown}
+            />
+            <span className={styles.priceSeparator}>—</span>
+            <input
+              className={styles.priceInput}
+              type="number"
+              placeholder="Đến"
+              value={priceMax}
+              onChange={(e) => setPriceMax(e.target.value)}
+              onKeyDown={handleKeyDown}
+            />
+          </div>
+        </div>
+
+        <div className={styles.filterDivider} />
+
+        {/* Filter: Trạng thái */}
+        <div className={styles.filterGroup}>
+          <span className={styles.filterLabel}>Trạng thái</span>
+          <Select
+            allowClear
+            placeholder="Tất cả trạng thái"
+            value={filterStatus}
+            onChange={(val) => setFilterStatus(val)}
+            style={{ width: 210, height: 36 }}
+            options={STATUS_OPTIONS.map((s) => ({
+              value: s.value,
+              label: (
+                <span style={{ color: STATUS_COLOR[s.value], fontWeight: 600 }}>
+                  {s.label}
+                </span>
+              ),
+            }))}
+          />
+        </div>
+
+        {/* Actions */}
+        <div className={styles.filterActions}>
+          {hasActiveFilters && (
+            <>
+              <span className={styles.resultCount}>
+                Hiển thị <b>{filteredData.length}</b> / {data.length} đơn
+              </span>
+              <Button className={styles.resetBtn} onClick={handleResetFilters}>
+                ✕ Xóa bộ lọc
+              </Button>
+            </>
+          )}
+          <Button
+            type="primary"
+            icon={<FileExcelOutlined />}
+            loading={exportingExcel}
+            onClick={handleExportExcel}
+            className={styles.excelBtn}
+          >
+            Xuất Excel
+          </Button>
+        </div>
       </div>
 
       <CommonTable<OrderInfor>
         columns={columns}
-        dataSource={data}
+        dataSource={filteredData}
         loading={loading}
         rowKeyField="orderCode"
         hideSearch

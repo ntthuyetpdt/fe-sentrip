@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card, Row, Col, Avatar, Upload, message } from "antd";
+import { Card, Row, Col, Avatar, Upload, message, Modal } from "antd";
 import { ArrowLeftOutlined, UserOutlined } from "@ant-design/icons";
 import BgWhiteBorder from "../../components/custom/bgWhiteBoder";
 import ButtonCustom from "../../components/custom/button";
@@ -28,6 +28,13 @@ const CustomerProfile: React.FC = () => {
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [role, setRole] = useState<string>("");
   const navigate = useNavigate();
+
+  // Password modal states
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordLoading, setPasswordLoading] = useState(false);
+
   const [customer, setCustomer] = useState<Customer>({
     fullName: "",
     gmail: "",
@@ -71,16 +78,12 @@ const CustomerProfile: React.FC = () => {
   }, []);
 
   const handleChange = (field: keyof Customer, value: string) => {
-    setCustomer((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    setCustomer((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async () => {
     try {
       const token = localStorage.getItem("access_token");
-
       const form = new FormData();
 
       if (avatarFile) {
@@ -108,7 +111,45 @@ const CustomerProfile: React.FC = () => {
 
       form.append(
         "request",
-        new Blob([JSON.stringify(requestData)], {
+        new Blob([JSON.stringify(requestData)], { type: "application/json" })
+      );
+
+      const api =
+        role === "CUSTOME"
+          ? "/customer/update/profile"
+          : "/employee/update/profile";
+
+      await axios.post(`${process.env.REACT_APP_API_URL}${api}`, form, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+      });
+
+      message.success("Cập nhật thành công!");
+      setEditing(false);
+      fetchProfile();
+    } catch (error) {
+      console.error(error);
+      message.error("Cập nhật thất bại!");
+    }
+  };
+
+  const handleChangePassword = async () => {
+    if (!newPassword || !confirmPassword) {
+      message.warning("Vui lòng nhập đầy đủ thông tin");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      message.warning("Mật khẩu xác nhận không khớp");
+      return;
+    }
+
+    try {
+      setPasswordLoading(true);
+      const token = localStorage.getItem("access_token");
+      const form = new FormData();
+
+      form.append(
+        "request",
+        new Blob([JSON.stringify({ password: newPassword })], {
           type: "application/json",
         })
       );
@@ -119,18 +160,25 @@ const CustomerProfile: React.FC = () => {
           : "/employee/update/profile";
 
       await axios.post(`${process.env.REACT_APP_API_URL}${api}`, form, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
-      message.success("Cập nhật thành công!");
-      setEditing(false);
-      fetchProfile();
+      message.success("Đổi mật khẩu thành công!");
+      setPasswordModalOpen(false);
+      setNewPassword("");
+      setConfirmPassword("");
     } catch (error) {
       console.error(error);
-      message.error("Cập nhật thất bại!");
+      message.error("Đổi mật khẩu thất bại!");
+    } finally {
+      setPasswordLoading(false);
     }
+  };
+
+  const handleClosePasswordModal = () => {
+    setPasswordModalOpen(false);
+    setNewPassword("");
+    setConfirmPassword("");
   };
 
   return (
@@ -144,14 +192,15 @@ const CustomerProfile: React.FC = () => {
           gap: 8,
           fontSize: 16,
           fontWeight: 500,
-          padding: '10px',
-          color: '#4C1D95'
+          padding: "10px",
+          color: "#4C1D95",
         }}
         onClick={() => navigate(-1)}
       >
         <ArrowLeftOutlined />
-        <span style={{marginTop:"-2px"}}>Quay lại</span>
+        <span style={{ marginTop: "-2px" }}>Quay lại</span>
       </div>
+
       <div className="customer-profile">
         <BgWhiteBorder className="paddingProfile">
           <Row gutter={[24, 24]} className="profile-row">
@@ -164,23 +213,24 @@ const CustomerProfile: React.FC = () => {
               />
 
               {!editing ? (
-                <div className="profile-action">
+                <div className="profile-action" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   <ButtonCustom text="Sửa" onClick={() => setEditing(true)} />
+                  <ButtonCustom
+                    text="Đổi mật khẩu"
+                    onClick={() => setPasswordModalOpen(true)}
+                  />
                 </div>
               ) : (
                 <Upload
                   showUploadList={false}
                   beforeUpload={(file) => {
                     const isLt2M = file.size / 1024 / 1024 < 2;
-
                     if (!isLt2M) {
                       message.error("Ảnh phải nhỏ hơn 2MB!");
                       return Upload.LIST_IGNORE;
                     }
-
                     setAvatarFile(file);
                     setAvatarPreview(URL.createObjectURL(file));
-
                     return false;
                   }}
                 >
@@ -196,11 +246,7 @@ const CustomerProfile: React.FC = () => {
                 {role !== "CUSTOME" && (
                   <Col xs={24} sm={12}>
                     <Card className="info-card">
-                      <CommonInput
-                        placeholder="Mã nhân viên"
-                        value={customer.mnv}
-                        disabled
-                      />
+                      <CommonInput placeholder="Mã nhân viên" value={customer.mnv} disabled />
                     </Card>
                   </Col>
                 )}
@@ -211,9 +257,7 @@ const CustomerProfile: React.FC = () => {
                       placeholder="Tên"
                       value={customer.fullName}
                       disabled={!editing}
-                      onChange={(e) =>
-                        handleChange("fullName", e.target.value)
-                      }
+                      onChange={(e) => handleChange("fullName", e.target.value)}
                     />
                   </Card>
                 </Col>
@@ -230,9 +274,7 @@ const CustomerProfile: React.FC = () => {
                       placeholder="Số điện thoại"
                       value={customer.phone}
                       disabled={!editing}
-                      onChange={(e) =>
-                        handleChange("phone", e.target.value)
-                      }
+                      onChange={(e) => handleChange("phone", e.target.value)}
                     />
                   </Card>
                 </Col>
@@ -240,12 +282,20 @@ const CustomerProfile: React.FC = () => {
                 <Col xs={24} sm={12}>
                   <Card className="info-card">
                     <CommonInput
+                      placeholder="Số tài khoản"
+                      value={customer.accountBank}
+                      disabled={!editing}
+                      onChange={(e) => handleChange("accountBank", e.target.value)}
+                    />
+                  </Card>
+                </Col>
+                <Col xs={24} sm={12}>
+                  <Card className="info-card">
+                    <CommonInput
                       placeholder="CCCD"
                       value={customer.cccd}
                       disabled={!editing}
-                      onChange={(e) =>
-                        handleChange("cccd", e.target.value)
-                      }
+                      onChange={(e) => handleChange("cccd", e.target.value)}
                     />
                   </Card>
                 </Col>
@@ -256,9 +306,7 @@ const CustomerProfile: React.FC = () => {
                       placeholder="Địa chỉ"
                       value={customer.address}
                       disabled={!editing}
-                      onChange={(e) =>
-                        handleChange("address", e.target.value)
-                      }
+                      onChange={(e) => handleChange("address", e.target.value)}
                     />
                   </Card>
                 </Col>
@@ -271,9 +319,7 @@ const CustomerProfile: React.FC = () => {
                           placeholder="Giới tính"
                           value={customer.gender}
                           disabled={!editing}
-                          onChange={(e) =>
-                            handleChange("gender", e.target.value)
-                          }
+                          onChange={(e) => handleChange("gender", e.target.value)}
                         />
                       </Card>
                     </Col>
@@ -284,25 +330,12 @@ const CustomerProfile: React.FC = () => {
                           placeholder="Ngân hàng"
                           value={customer.bankName}
                           disabled={!editing}
-                          onChange={(e) =>
-                            handleChange("bankName", e.target.value)
-                          }
+                          onChange={(e) => handleChange("bankName", e.target.value)}
                         />
                       </Card>
                     </Col>
 
-                    <Col xs={24} sm={12}>
-                      <Card className="info-card">
-                        <CommonInput
-                          placeholder="Số tài khoản"
-                          value={customer.accountBank}
-                          disabled={!editing}
-                          onChange={(e) =>
-                            handleChange("accountBank", e.target.value)
-                          }
-                        />
-                      </Card>
-                    </Col>
+
                   </>
                 )}
               </Row>
@@ -317,6 +350,53 @@ const CustomerProfile: React.FC = () => {
           </Row>
         </BgWhiteBorder>
       </div>
+
+      {/* Modal đổi mật khẩu */}
+      <Modal
+        title="Đổi mật khẩu"
+        open={passwordModalOpen}
+        onCancel={handleClosePasswordModal}
+        footer={null}
+        centered
+        destroyOnClose
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: 16, padding: "8px 0" }}>
+
+          <div>
+            <div style={{ marginBottom: 6, fontSize: 13, color: "#555" }}>
+              Mật khẩu mới
+            </div>
+            <CommonInput
+              placeholder="Nhập mật khẩu mới"
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <div style={{ marginBottom: 6, fontSize: 13, color: "#555" }}>
+              Xác nhận mật khẩu
+            </div>
+            <CommonInput
+              placeholder="Nhập lại mật khẩu mới"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+          </div>
+
+          <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 4 }}>
+            <ButtonCustom text="Huỷ" onClick={handleClosePasswordModal} />
+            <ButtonCustom
+              text={passwordLoading ? "Đang lưu..." : "Xác nhận"}
+              onClick={handleChangePassword}
+              disabled={passwordLoading}
+            />
+          </div>
+
+        </div>
+      </Modal>
     </div>
   );
 };
