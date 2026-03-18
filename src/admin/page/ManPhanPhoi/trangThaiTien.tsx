@@ -415,31 +415,31 @@ const KiemTraTrangThaiDon = () => {
                 </Tag>
             ),
         },
-        {
-            title: "Thao tác",
-            render: (_: any, record: ProStatus) => {
-                const canPay = record.status !== "SUCCESS";
-                const isDispatching = dispatchingCode === record.orderCode;
-                return (
-                    <Space>
-                        <Popconfirm
-                            title="Xác nhận đi tiền?"
-                            description="Yêu cầu thanh toán"
-                            okText="Xác nhận"
-                            cancelText="Hủy"
-                            disabled={!canPay || isDispatching}
-                            onConfirm={() => handleDiTien(record.orderCode)}
-                        >
-                            <SendOutlined
-                                className={canPay && !isDispatching ? "kttt-send-active" : "kttt-send-disabled"}
-                                style={{ opacity: isDispatching ? 0.5 : 1 }}
-                                title={canPay ? "Đi tiền" : "Đã hoàn thành"}
-                            />
-                        </Popconfirm>
-                    </Space>
-                );
-            },
-        },
+        // {
+        //     title: "Thao tác",
+        //     render: (_: any, record: ProStatus) => {
+        //         const canPay = record.status !== "SUCCESS";
+        //         const isDispatching = dispatchingCode === record.orderCode;
+        //         return (
+        //             <Space>
+        //                 <Popconfirm
+        //                     title="Xác nhận đi tiền?"
+        //                     description="Yêu cầu thanh toán"
+        //                     okText="Xác nhận"
+        //                     cancelText="Hủy"
+        //                     disabled={!canPay || isDispatching}
+        //                     onConfirm={() => handleDiTien(record.orderCode)}
+        //                 >
+        //                     <SendOutlined
+        //                         className={canPay && !isDispatching ? "kttt-send-active" : "kttt-send-disabled"}
+        //                         style={{ opacity: isDispatching ? 0.5 : 1 }}
+        //                         title={canPay ? "Đi tiền" : "Đã hoàn thành"}
+        //                     />
+        //                 </Popconfirm>
+        //             </Space>
+        //         );
+        //     },
+        // },
     ];
 
     const fetchData = async () => {
@@ -525,7 +525,7 @@ const KiemTraTrangThaiDon = () => {
                 </div>
 
                 {/* Trạng thái */}
-                <div className="kttt-filter-field">
+                {/* <div className="kttt-filter-field">
                     <span className="kttt-filter-field__label">Trạng thái</span>
                     <select
                         value={filterStatus}
@@ -537,7 +537,7 @@ const KiemTraTrangThaiDon = () => {
                             <option key={key} value={key}>{label}</option>
                         ))}
                     </select>
-                </div>
+                </div> */}
 
                 {/* Xoá lọc */}
                 {hasFilter && (

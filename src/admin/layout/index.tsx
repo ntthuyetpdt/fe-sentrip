@@ -183,7 +183,7 @@ const AdminLayout = ({ children, breadcrumb = [] }: AdminLayoutProps) => {
     {
       key: "pay",
       icon: <ExportOutlined />,
-      label: "Đi đơn cho NPP",
+      label: "Thanh toán nhà cung cấp",
     },
   ];
 

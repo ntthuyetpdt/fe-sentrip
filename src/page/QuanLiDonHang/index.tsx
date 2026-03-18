@@ -44,7 +44,7 @@ const TAB_ITEMS = [
   { key: "pending", label: "Chờ xác nhận" },
   { key: "confirmed", label: "Đã xác nhận" },
   { key: "paid", label: "Đã thanh toán" },
-  { key: "completed", label: "Hoàn thành" },
+  // { key: "completed", label: "Hoàn thành" },
   // { key: "cancelled", label: "Đã hủy" },
   // { key: "refund_requested", label: "Yêu cầu hoàn vé" },
   // { key: "refunded", label: "Đã hoàn tiền" },
