@@ -21,28 +21,28 @@ export interface Invoice {
 const DOMAIN = process.env.REACT_APP_API_URL;
 
 const TIME_OPTIONS = [
-  { value: "ALL",    label: "Tất cả thời gian" },
-  { value: "TODAY",  label: "Hôm nay" },
-  { value: "7DAYS",  label: "7 ngày gần đây" },
+  { value: "ALL", label: "Tất cả thời gian" },
+  { value: "TODAY", label: "Hôm nay" },
+  { value: "7DAYS", label: "7 ngày gần đây" },
   { value: "30DAYS", label: "30 ngày gần đây" },
 ];
 
 const STATUS_OPTIONS = [
-  { value: "UNPAID",                 label: "Chưa thanh toán",       color: "#ff4d4f" },
-  { value: "INVOICE_HAS_BEEN_ISSUED", label: "Đã xuất hóa đơn",      color: "#1677ff" },
-  { value: "GENERATED",              label: "Đã tạo hóa đơn",        color: "#52c41a" },
+  { value: "UNPAID", label: "Chưa thanh toán", color: "#ff4d4f" },
+  { value: "INVOICE_HAS_BEEN_ISSUED", label: "Đã xuất hóa đơn", color: "#1677ff" },
+  { value: "GENERATED", label: "Đã tạo hóa đơn", color: "#52c41a" },
 ];
 
 const STATUS_COLOR: Record<string, string> = {
-  UNPAID:                  "#ff4d4f",
+  UNPAID: "#ff4d4f",
   INVOICE_HAS_BEEN_ISSUED: "#1677ff",
-  GENERATED:               "#52c41a",
+  GENERATED: "#52c41a",
 };
 
 const STATUS_LABEL: Record<string, string> = {
-  UNPAID:                  "Chưa thanh toán",
+  UNPAID: "Chưa thanh toán",
   INVOICE_HAS_BEEN_ISSUED: "Đã xuất hóa đơn",
-  GENERATED:               "Đã tạo hóa đơn",
+  GENERATED: "Đã tạo hóa đơn",
 };
 
 const GetHoaDon = () => {
@@ -224,12 +224,14 @@ const GetHoaDon = () => {
             style={{ color: "violet", cursor: "pointer" }}
             onClick={() => { setSelected(record); setModalOpen(true); }}
           />
-          <Button
-            size="small"
-            icon={<UploadOutlined />}
-            className="btn-submit-unit"
-            onClick={() => openUploadModal(record.orderCode)}
-          />
+          {record.status === "GENERATED" && (
+            <Button
+              size="small"
+              icon={<UploadOutlined />}
+              className="btn-submit-unit"
+              onClick={() => openUploadModal(record.orderCode)}
+            />
+          )}
         </Space>
       ),
     },
@@ -357,7 +359,7 @@ const GetHoaDon = () => {
       />
 
       <Modal
-        title="Up vé file KT"
+        title="Up file"
         open={uploadModalOpen}
         onCancel={() => setUploadModalOpen(false)}
         footer={null}

@@ -254,7 +254,7 @@ const QuanLiKhachHangDaMua = () => {
     { title: "Mã đơn", dataIndex: "orderCode" },
     { title: "Tên KH", dataIndex: "fullName" },
     { title: "SĐT", dataIndex: "phone" },
-    { title: "Sản phẩm", dataIndex: "productName" },
+    { title: "Dịch vụ", dataIndex: "productName" },
     { title: "Số lượng", dataIndex: "quantity" },
     {
       title: "Giá tiền",

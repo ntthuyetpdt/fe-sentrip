@@ -92,7 +92,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
       <Form form={form} layout="vertical">
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label="Tên sản phẩm" name="productName">
+            <Form.Item label="Tên dịch vụ" name="productName">
               <CommonInput disabled={isView} />
             </Form.Item>
           </Col>
@@ -142,7 +142,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
 
           <Col span={24}>
             <Form.Item
-              label="Ảnh sản phẩm"
+              label="Ảnh dịch vụ"
               name="img"
               valuePropName="fileList"
               getValueFromEvent={(e) => e?.fileList}

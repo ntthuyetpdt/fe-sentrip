@@ -80,7 +80,7 @@ const GetDoanhThuProModal: React.FC<Props> = ({
         <Row gutter={16}>
 
           <Col span={24}>
-            <Form.Item label="Tên sản phẩm" name="productName">
+            <Form.Item label="Tên dịch vụ" name="productName">
               <CommonInput disabled />
             </Form.Item>
           </Col>
@@ -119,12 +119,12 @@ const GetDoanhThuProModal: React.FC<Props> = ({
 
       {detail && (
         <>
-          <Divider>Thông tin sản phẩm</Divider>
+          <Divider>Thông tin dịch vụ</Divider>
 
           <Form layout="vertical">
             <Row gutter={16}>
               <Col span={12}>
-                <Form.Item label="Tên sản phẩm">
+                <Form.Item label="Tên dịch vụ">
                   <CommonInput value={detail.productName} disabled />
                 </Form.Item>
               </Col>

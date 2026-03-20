@@ -299,7 +299,7 @@ const ProductManagement = () => {
         setPagination((prev) => ({ ...prev, total: res.data.length }));
       }
     } catch {
-      message.error("Không tải được danh sách sản phẩm");
+      message.error("Không tải được danh sách dịch");
     } finally {
       setLoading(false);
     }
@@ -332,7 +332,7 @@ const ProductManagement = () => {
   const handleDelete = async (id: number) => {
     try {
       await deleteProduct(id);
-      message.success("Xoá sản phẩm thành công");
+      message.success("Xoá dịch thành công");
       fetchData();
     } catch {
       message.error("Xoá thất bại");
@@ -343,7 +343,7 @@ const ProductManagement = () => {
     try {
       if (mode === "create") {
         await createProductLocal(formData);
-        message.success("Thêm sản phẩm thành công");
+        message.success("Thêm dịch thành công");
       }
       if (mode === "edit" && selected) {
         await updateProductLocal(selected.id, formData);
@@ -364,7 +364,7 @@ const ProductManagement = () => {
         <Image src={img} width={80} height={60} style={{ objectFit: "cover" }} />
       ),
     },
-    { title: "Tên sản phẩm", dataIndex: "productName" },
+    { title: "Tên dịch vụ", dataIndex: "productName" },
     { title: "Loại dịch vụ", dataIndex: "serviceType" },
     {
       title: "Giá",
@@ -401,20 +401,20 @@ const ProductManagement = () => {
       <style>{filterStyles}</style>
 
       <div style={{ marginBottom: 20 }}>
-        <ButtonCustom text="Thêm sản phẩm" onClick={handleCreate} />
+        <ButtonCustom text="Thêm dịch vụ" onClick={handleCreate} />
       </div>
 
       {/* Filter bar */}
       <div className="pm-filter-panel">
 
-        {/* Tên sản phẩm */}
+        {/* Tên dịch vụ */}
         <div className="pm-filter-field">
-          <span className="pm-filter-field__label">Tên sản phẩm</span>
+          <span className="pm-filter-field__label">Tên dịch vụ</span>
           <div className="pm-filter-input-wrap">
             <SearchOutlined className="pm-input-icon" />
             <input
               type="text"
-              placeholder="Tìm tên sản phẩm..."
+              placeholder="Tìm tên dịch vụ..."
               value={filterProductName}
               onChange={(e) => setFilterProductName(e.target.value)}
               className="pm-filter-input"

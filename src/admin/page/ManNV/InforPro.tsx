@@ -80,11 +80,12 @@ const InforPro = () => {
   const [priceMin, setPriceMin] = useState("");
   const [priceMax, setPriceMax] = useState("");
   const [filterStatus, setFilterStatus] = useState<string | undefined>(undefined);
+  const [filterPaymentStatus, setFilterPaymentStatus] = useState<string | undefined>(undefined);
 
-  // --- Filtered data (computed from raw data + filter state) ---
   const user_profile = JSON.parse(localStorage.getItem("user_profile") || "{}");
   const role = user_profile.role;
 
+  // --- Filtered data ---
   const filteredData = useMemo(() => {
     return data.filter((item) => {
       // Filter mã đơn
@@ -95,7 +96,7 @@ const InforPro = () => {
         return false;
       }
 
-      // Filter khoảng giá: nếu có lọc giá mà item không có giá thì loại bỏ
+      // Filter khoảng giá
       const hasPriceFilter = priceMin !== "" || priceMax !== "";
       if (hasPriceFilter) {
         if (item.totalAmount === null || item.totalAmount === undefined) return false;
@@ -103,22 +104,32 @@ const InforPro = () => {
         if (priceMax !== "" && !isNaN(Number(priceMax)) && item.totalAmount > Number(priceMax)) return false;
       }
 
-      // Filter trạng thái đơn: CONFIRM = đã xác nhận, UNCONFIRMED = chưa xác nhận
+      // Filter trạng thái đơn
       if (filterStatus === "CONFIRM") {
         if (item.orderStatus !== "CONFIRM" && item.orderStatus !== "CONFIRMED") return false;
       } else if (filterStatus === "UNCONFIRMED") {
         if (item.orderStatus === "CONFIRM" || item.orderStatus === "CONFIRMED") return false;
       }
 
+      // Filter trạng thái thanh toán
+      if (filterPaymentStatus !== undefined) {
+        if (filterPaymentStatus === "NONE") {
+          if (item.paymentStatus !== null && item.paymentStatus !== undefined) return false;
+        } else {
+          if (item.paymentStatus !== filterPaymentStatus) return false;
+        }
+      }
+
       return true;
     });
-  }, [data, filterOrderCode, priceMin, priceMax, filterStatus]);
+  }, [data, filterOrderCode, priceMin, priceMax, filterStatus, filterPaymentStatus]);
 
   const handleResetFilters = () => {
     setFilterOrderCode("");
     setPriceMin("");
     setPriceMax("");
     setFilterStatus(undefined);
+    setFilterPaymentStatus(undefined);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -309,13 +320,6 @@ const InforPro = () => {
             }}
             title="Xuất PDF"
           />
-          {/* {role !== "ADMIN" || record.paymentStatus !== "SUCCESS" && (
-            <EditOutlined
-              style={{ color: "#1677ff", cursor: "pointer", fontSize: 16 }}
-              onClick={() => openUpdateModal(record)}
-              title="Cập nhật trạng thái"
-            />
-          )} */}
           {role !== "ADMIN" && record.paymentStatus === "SUCCESS" && (
             <EditOutlined
               style={{ color: "#1677ff", cursor: "pointer", fontSize: 16 }}
@@ -350,7 +354,8 @@ const InforPro = () => {
     filterOrderCode.trim() !== "" ||
     priceMin !== "" ||
     priceMax !== "" ||
-    filterStatus !== undefined;
+    filterStatus !== undefined ||
+    filterPaymentStatus !== undefined;
 
   return (
     <div>
@@ -423,6 +428,36 @@ const InforPro = () => {
                   </span>
                 ),
               },
+            ]}
+          />
+        </div>
+
+        <div className={styles.filterDivider} />
+
+        {/* Filter: Trạng thái thanh toán */}
+        <div className={styles.filterGroup}>
+          <span className={styles.filterLabel}>Trạng thái TT</span>
+          <Select
+            allowClear
+            placeholder="Tất cả"
+            value={filterPaymentStatus}
+            onChange={(val) => setFilterPaymentStatus(val)}
+            style={{ width: 190, height: 36 }}
+            options={[
+              {
+                value: "NONE",
+                label: (
+                  <span style={{ color: "#8c8c8c", fontWeight: 600 }}>Chưa có</span>
+                ),
+              },
+              ...PAYMENT_STATUS_OPTIONS.map((s) => ({
+                value: s.value,
+                label: (
+                  <span style={{ color: PAYMENT_STATUS_COLOR[s.value], fontWeight: 600 }}>
+                    {s.label}
+                  </span>
+                ),
+              })),
             ]}
           />
         </div>

@@ -85,7 +85,7 @@ const Index = () => {
 
   const handleOrder = async () => {
     if (selected.length === 0) {
-      message.warning("Vui lòng chọn sản phẩm");
+      message.warning("Vui lòng chọn dịch vụ");
       return;
     }
 
@@ -119,7 +119,7 @@ const Index = () => {
 
   const handleDelete = async () => {
     if (selected.length === 0) {
-      message.warning("Vui lòng chọn sản phẩm cần xoá");
+      message.warning("Vui lòng chọn dịch vụ cần xoá");
       return;
     }
 
@@ -136,10 +136,10 @@ const Index = () => {
       setCart(newCart);
       setSelected([]);
 
-      message.success("Xoá sản phẩm thành công");
+      message.success("Xoá dịch vụ thành công");
 
     } catch (error) {
-      message.error("Xoá sản phẩm thất bại");
+      message.error("Xoá dịch vụ thất bại");
     }
   };
 

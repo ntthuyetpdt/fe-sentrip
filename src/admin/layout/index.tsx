@@ -159,12 +159,12 @@ const AdminLayout = ({ children, breadcrumb = [] }: AdminLayoutProps) => {
     {
       key: "merchant_total_pro",
       icon: <DollarCircleOutlined />,
-      label: "Quản lí doanh thu sản phẩm",
+      label: "Quản lí doanh thu dịch vụ",
     },
     {
       key: "merchant_TrangThaiTien",
       icon: <ExportOutlined />,
-      label: "Trạng thái thanh toán của đơn hàng",
+      label: "Quản lí thanh toán",
     },
     {
       key: "merchant_total",

@@ -187,7 +187,7 @@ const QuanLiKhachHangDaMuaModal: React.FC<Props> = ({
                 </Col>
 
                 <Col span={12}>
-                  <Form.Item label="Sản phẩm" name="productName">
+                  <Form.Item label="Dịch vụ" name="productName">
                     <CommonInput disabled />
                   </Form.Item>
                 </Col>

@@ -65,7 +65,7 @@ const NVBaoCao = () => {
     };
 
     const columns = [
-        { title: "ID sản phẩm", dataIndex: "productId" },
+        { title: "ID dịch vụ", dataIndex: "productId" },
         { title: "Tên dịch vụ", dataIndex: "productName" },
         { title: "Dịch vụ thêm", dataIndex: "additionalServices" },
         { title: "Tổng khách", dataIndex: "totalCustomers" },

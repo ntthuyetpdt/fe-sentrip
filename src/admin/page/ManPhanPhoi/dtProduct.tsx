@@ -280,7 +280,7 @@ const GetDoanhThuPro = () => {
   });
 
   const columns = [
-    { title: "Tên sản phẩm", dataIndex: "productName" },
+    { title: "Tên dịch vụ", dataIndex: "productName" },
     { title: "Dịch vụ kèm", dataIndex: "additionalServices" },
     { title: "Số khách", dataIndex: "totalCustomers" },
     { title: "Số đơn", dataIndex: "totalOrders" },
@@ -352,12 +352,12 @@ const GetDoanhThuPro = () => {
           {hasFilter && <span className="filter-active-badge">{activeFiltersCount}</span>}
         </div> */}
 
-        {/* Tên sản phẩm */}
+        {/* Tên dịch vụ */}
         <div className="filter-field">
-          <span className="filter-field__label">Tên sản phẩm</span>
+          <span className="filter-field__label">Tên dịch vụ</span>
           <input
             type="text"
-            placeholder="Tìm tên sản phẩm..."
+            placeholder="Tìm tên dịch vụ..."
             value={filterProductName}
             onChange={(e) => setFilterProductName(e.target.value)}
             className="filter-input"
