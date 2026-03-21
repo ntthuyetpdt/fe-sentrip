@@ -178,7 +178,7 @@ const QuanLiNhanVien = () => {
         columns={columns}
         dataSource={filteredData}
         loading={loading}
-        pagination={pagination}
+        // pagination={pagination}
         rowKeyField="fullName"
         hideSearch
       />

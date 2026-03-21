@@ -160,7 +160,7 @@ const GetMerchant = () => {
         columns={columns}
         dataSource={filteredData}
         loading={loading}
-        pagination={pagination}
+        // pagination={pagination}
         rowKeyField="id"
         hideSearch
       />
