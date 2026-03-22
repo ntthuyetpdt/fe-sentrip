@@ -84,7 +84,7 @@ const GetMerchantModal: React.FC<Props> = ({
           </Col>
 
           <Col span={12}>
-            <Form.Item label="Giấy phép kinh doanh" name="businessLicense">
+            <Form.Item label="Mã số doanh nghiệp" name="businessLicense">
               <CommonInput disabled />
             </Form.Item>
           </Col>

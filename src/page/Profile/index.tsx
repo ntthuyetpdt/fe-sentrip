@@ -386,7 +386,7 @@ const CustomerProfile: React.FC = () => {
       <Col xs={24} sm={12}>
         <Card className="info-card">
           <CommonInput
-            placeholder="Giấy phép kinh doanh"
+            placeholder="Mã số doanh nghiệp"
             value={merchantProfile.businessLicense}
             disabled={!editing}
             onChange={(e) => setMerchantProfile((p) => ({ ...p, businessLicense: e.target.value }))}
