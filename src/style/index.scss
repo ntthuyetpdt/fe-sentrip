@@ -40,7 +40,14 @@
     border-color: #5b21b6 !important;
   }
 }
+.custom-datepicker {
+  width: 100%;
+  border-radius: 10px !important;
+}
 
+.custom-datepicker .ant-picker-input > input {
+  border-radius: 10px !important;
+}
 @import './header.scss';
 @import './btnCustom.scss';
 @import './login.scss';

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card, Row, Col, Avatar, Upload, message, Modal } from "antd";
+import { Card, Row, Col, Avatar, Upload, message, Modal, Select, DatePicker } from "antd";
 import { ArrowLeftOutlined, UserOutlined } from "@ant-design/icons";
 import BgWhiteBorder from "../../components/custom/bgWhiteBoder";
 import ButtonCustom from "../../components/custom/button";
@@ -7,173 +7,235 @@ import CommonInput from "../../components/custom/input";
 import axios from "axios";
 import { getProfile } from "../../api/api";
 import { useNavigate } from "react-router-dom";
+import dayjs, { Dayjs } from "dayjs";
 
-interface Customer {
-  mnv?: string;
+// ── Interfaces ────────────────────────────────────────────────────────────────
+
+interface UserProfile {
   fullName: string;
-  gmail: string;
   phone: string;
-  gender?: string;
-  dateTime?: string;
   address: string;
-  joinDate?: string;
   cccd: string;
-  bankName?: string;
-  accountBank?: string;
 }
 
-const NUMBER_ONLY_FIELDS: (keyof Customer)[] = ["phone", "cccd", "accountBank"];
+interface MerchantProfile {
+  merchantName: string;
+  phone: string;
+  cccd: string;
+  bankName: string;
+  bankAccount: string;
+  address: string;
+  img: string;
+  businessLicense: string;
+}
+
+interface EmployeeProfile {
+  mnv: string;
+  fullName: string;
+  phone: string;
+  gender: string;
+  dateTime: Dayjs | null;
+  address: string;
+  joinDate: string;
+  cccd: string;
+  bankName: string;
+  accountBank: string;
+}
+
+type Role = "CUSTOME" | "MERCHANT" | "EMPLOYEE" | "";
+
+// ── Helper ────────────────────────────────────────────────────────────────────
+
+const getUpdateApi = (role: Role) => {
+  if (role === "CUSTOME") return "/customer/update/profile";
+  if (role === "MERCHANT") return "/merchant/update/profile";
+  return "/employee/update/profile";
+};
+
+// ── Component ─────────────────────────────────────────────────────────────────
 
 const CustomerProfile: React.FC = () => {
+  const navigate = useNavigate();
+  const [role, setRole] = useState<Role>("");
   const [editing, setEditing] = useState(false);
+
+  // Avatar
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-  const [role, setRole] = useState<string>("");
-  const [errors, setErrors] = useState<Partial<Record<keyof Customer, string>>>({});
-  const navigate = useNavigate();
 
+  // Profile states
+  const [userProfile, setUserProfile] = useState<UserProfile>({
+    fullName: "", phone: "", address: "", cccd: "",
+  });
+
+  const [merchantProfile, setMerchantProfile] = useState<MerchantProfile>({
+    merchantName: "", phone: "", cccd: "", bankName: "",
+    bankAccount: "", address: "", img: "", businessLicense: "",
+  });
+
+  const [employeeProfile, setEmployeeProfile] = useState<EmployeeProfile>({
+    mnv: "", fullName: "", phone: "", gender: "",
+    dateTime: null, address: "", joinDate: "",
+    cccd: "", bankName: "", accountBank: "",
+  });
+
+  // Password modal
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordLoading, setPasswordLoading] = useState(false);
 
-  const [customer, setCustomer] = useState<Customer>({
-    fullName: "",
-    gmail: "",
-    phone: "",
-    cccd: "",
-    address: "",
-  });
+  // ── Fetch ──────────────────────────────────────────────────────────────────
 
   const fetchProfile = async () => {
     try {
       const res = await getProfile();
       const data = res.data;
-      setRole(data?.role);
-      setCustomer({
-        mnv: data.mnv || "",
-        fullName: data.name || "",
-        gmail: data.gmail || "",
-        phone: data.phone || "",
-        gender: data.gender || "",
-        dateTime: data.dateTime || "",
-        address: data.address || "",
-        joinDate: data.joinDate || "",
-        cccd: data.cccd || "",
-        bankName: data.bankName || "",
-        accountBank: data.accountBank || "",
-      });
+      const r: Role = data?.role ?? "";
+      setRole(r);
       if (data.img) setAvatarPreview(data.img);
-    } catch (error) {
-      console.error(error);
-      message.error("Không lấy được thông tin khách hàng");
+
+      if (r === "CUSTOME") {
+        setUserProfile({
+          fullName: data.fullName || "",
+          phone: data.phone || "",
+          address: data.address || "",
+          cccd: data.cccd || "",
+        });
+      } else if (r === "MERCHANT") {
+        setMerchantProfile({
+          merchantName: data.merchantName || "",
+          phone: data.phone || "",
+          cccd: data.cccd || "",
+          bankName: data.bankName || "",
+          bankAccount: data.bankAccount || "",
+          address: data.address || "",
+          img: data.img || "",
+          businessLicense: data.businessLicense || "",
+        });
+      } else {
+        setEmployeeProfile({
+          mnv: data.mnv || "",
+          fullName: data.fullName || "",
+          phone: data.phone || "",
+          gender: data.gender || "",
+          dateTime: data.dateTime ? dayjs(data.dateTime) : null,
+          address: data.address || "",
+          joinDate: data.joinDate || "",
+          cccd: data.cccd || "",
+          bankName: data.bankName || "",
+          accountBank: data.accountBank || "",
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      message.error("Không lấy được thông tin hồ sơ");
     }
   };
 
   useEffect(() => { fetchProfile(); }, []);
 
-  const handleChange = (field: keyof Customer, value: string) => {
-    if (NUMBER_ONLY_FIELDS.includes(field)) {
-      if (value !== "" && !/^\d+$/.test(value)) {
-        setErrors((prev) => ({ ...prev, [field]: "Chỉ được nhập số" }));
-        return;
-      }
-      // Xoá lỗi khi nhập đúng
-      setErrors((prev) => ({ ...prev, [field]: undefined }));
+  // ── Helpers ────────────────────────────────────────────────────────────────
+
+  const validateCommon = (phone: string, cccd: string) => {
+    if (phone && phone.length !== 10) {
+      message.warning("Số điện thoại phải đúng 10 số"); return false;
     }
-    setCustomer((prev) => ({ ...prev, [field]: value }));
+    if (cccd && cccd.length !== 12) {
+      message.warning("CCCD phải đúng 12 số"); return false;
+    }
+    return true;
   };
 
+  const buildForm = (payload: object, imgFile?: File | null) => {
+    const form = new FormData();
+    if (imgFile) form.append("img", imgFile);
+    form.append("request", new Blob([JSON.stringify(payload)], { type: "application/json" }));
+    return form;
+  };
+
+  const postForm = async (api: string, form: FormData) => {
+    await axios.post(`${process.env.REACT_APP_API_URL}${api}`, form, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
+    });
+  };
+
+  // ── Submit ─────────────────────────────────────────────────────────────────
+
   const handleSubmit = async () => {
-    if (customer.phone && customer.phone.length !== 10) {
-      message.warning("Số điện thoại phải đúng 10 số");
-      return;
-    }
-    if (customer.cccd && customer.cccd.length !== 12) {
-      message.warning("CCCD phải đúng 12 số");
-      return;
-    }
-
     try {
-      const form = new FormData();
-      if (avatarFile) form.append("img", avatarFile);
+      let form: FormData;
 
-      const requestData =
-        role === "CUSTOME"
-          ? {
-              fullName: customer.fullName,
-              phone: customer.phone,
-              address: customer.address,
-              cccd: customer.cccd,
-            }
-          : {
-              mnv: customer.mnv,
-              fullName: customer.fullName,
-              phone: customer.phone,
-              gender: customer.gender,
-              address: customer.address,
-              cccd: customer.cccd,
-              bankName: customer.bankName,
-              accountBank: customer.accountBank,
-            };
+      if (role === "CUSTOME") {
+        if (!validateCommon(userProfile.phone, userProfile.cccd)) return;
+        form = buildForm(
+          {
+            fullName: userProfile.fullName,
+            phone: userProfile.phone,
+            address: userProfile.address,
+            cccd: userProfile.cccd,
+          },
+          avatarFile
+        );
+      } else if (role === "MERCHANT") {
+        if (!validateCommon(merchantProfile.phone, merchantProfile.cccd)) return;
+        form = buildForm(
+          {
+            merchantName: merchantProfile.merchantName,
+            phone: merchantProfile.phone,
+            cccd: merchantProfile.cccd,
+            bankName: merchantProfile.bankName,
+            bankAccount: merchantProfile.bankAccount,
+            address: merchantProfile.address,
+            businessLicense: merchantProfile.businessLicense,
+          },
+          avatarFile
+        );
+      } else {
+        if (!validateCommon(employeeProfile.phone, employeeProfile.cccd)) return;
+        form = buildForm(
+          {
+            fullName: employeeProfile.fullName,
+            phone: employeeProfile.phone,
+            gender: employeeProfile.gender,
+            dateTime: employeeProfile.dateTime?.toISOString() ?? null,
+            address: employeeProfile.address,
+            cccd: employeeProfile.cccd,
+            bankName: employeeProfile.bankName,
+            accountBank: employeeProfile.accountBank,
+          },
+          avatarFile
+        );
+      }
 
-      form.append(
-        "request",
-        new Blob([JSON.stringify(requestData)], { type: "application/json" })
-      );
-
-      const api =
-        role === "CUSTOME"
-          ? "/customer/update/profile"
-          : "/employee/update/profile";
-
-      await axios.post(`${process.env.REACT_APP_API_URL}${api}`, form, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
-      });
-
+      await postForm(getUpdateApi(role), form);
       message.success("Cập nhật thành công!");
       setEditing(false);
-      setErrors({});
       fetchProfile();
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
       message.error("Cập nhật thất bại!");
     }
   };
 
+  // ── Password ───────────────────────────────────────────────────────────────
+
   const handleChangePassword = async () => {
     if (!newPassword || !confirmPassword) {
-      message.warning("Vui lòng nhập đầy đủ thông tin");
-      return;
+      message.warning("Vui lòng nhập đầy đủ thông tin"); return;
     }
     if (newPassword !== confirmPassword) {
-      message.warning("Mật khẩu xác nhận không khớp");
-      return;
+      message.warning("Mật khẩu xác nhận không khớp"); return;
     }
-
     try {
       setPasswordLoading(true);
-      const form = new FormData();
-      form.append(
-        "request",
-        new Blob([JSON.stringify({ password: newPassword })], { type: "application/json" })
-      );
-
-      const api =
-        role === "CUSTOME"
-          ? "/customer/update/profile"
-          : "/employee/update/profile";
-
-      await axios.post(`${process.env.REACT_APP_API_URL}${api}`, form, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
-      });
-
+      const form = buildForm({ password: newPassword });
+      await postForm(getUpdateApi(role), form);
       message.success("Đổi mật khẩu thành công!");
       setPasswordModalOpen(false);
-      setNewPassword("");
-      setConfirmPassword("");
-    } catch (error) {
-      console.error(error);
+      setNewPassword(""); setConfirmPassword("");
+    } catch (err) {
+      console.error(err);
       message.error("Đổi mật khẩu thất bại!");
     } finally {
       setPasswordLoading(false);
@@ -182,31 +244,296 @@ const CustomerProfile: React.FC = () => {
 
   const handleClosePasswordModal = () => {
     setPasswordModalOpen(false);
-    setNewPassword("");
-    setConfirmPassword("");
+    setNewPassword(""); setConfirmPassword("");
   };
 
-  // Helper render lỗi
-  const renderError = (field: keyof Customer) =>
-    errors[field] ? (
-      <div style={{ color: "#ff4d4f", fontSize: 12, marginTop: 4, paddingLeft: 4 }}>
-        {errors[field]}
-      </div>
-    ) : null;
+  // ── Avatar upload ──────────────────────────────────────────────────────────
+
+  const beforeUploadAvatar = (file: File) => {
+    if (file.size / 1024 / 1024 >= 2) {
+      message.error("Ảnh phải nhỏ hơn 2MB!"); return Upload.LIST_IGNORE;
+    }
+    setAvatarFile(file);
+    setAvatarPreview(URL.createObjectURL(file));
+    return false;
+  };
+
+  // ── Numeric input helper ───────────────────────────────────────────────────
+
+  const numericInput = (
+    value: string,
+    onChange: (v: string) => void,
+    placeholder: string,
+    maxLen?: number
+  ) => (
+    <CommonInput
+      placeholder={placeholder}
+      value={value}
+      disabled={!editing}
+      onChange={(e) => {
+        const v = e.target.value;
+        if (v !== "" && !/^\d+$/.test(v)) return;
+        if (maxLen && v.length > maxLen) return;
+        onChange(v);
+      }}
+    />
+  );
+
+  // ── Render: CUSTOME ────────────────────────────────────────────────────────
+
+  const renderUserFields = () => (
+    <>
+      <Col xs={24} sm={12}>
+        <Card className="info-card">
+          <CommonInput
+            placeholder="Họ và tên"
+            value={userProfile.fullName}
+            disabled={!editing}
+            onChange={(e) => setUserProfile((p) => ({ ...p, fullName: e.target.value }))}
+          />
+        </Card>
+      </Col>
+
+      <Col xs={24} sm={12}>
+        <Card className="info-card">
+          {numericInput(
+            userProfile.phone,
+            (v) => setUserProfile((p) => ({ ...p, phone: v })),
+            "Số điện thoại", 10
+          )}
+        </Card>
+      </Col>
+
+      <Col xs={24} sm={12}>
+        <Card className="info-card">
+          {numericInput(
+            userProfile.cccd,
+            (v) => setUserProfile((p) => ({ ...p, cccd: v })),
+            "CCCD", 12
+          )}
+        </Card>
+      </Col>
+
+      <Col xs={24}>
+        <Card className="info-card">
+          <CommonInput
+            placeholder="Địa chỉ"
+            value={userProfile.address}
+            disabled={!editing}
+            onChange={(e) => setUserProfile((p) => ({ ...p, address: e.target.value }))}
+          />
+        </Card>
+      </Col>
+    </>
+  );
+
+  // ── Render: MERCHANT ───────────────────────────────────────────────────────
+
+  const renderMerchantFields = () => (
+    <>
+      <Col xs={24} sm={12}>
+        <Card className="info-card">
+          <CommonInput
+            placeholder="Tên nhà cung cấp"
+            value={merchantProfile.merchantName}
+            disabled={!editing}
+            onChange={(e) => setMerchantProfile((p) => ({ ...p, merchantName: e.target.value }))}
+          />
+        </Card>
+      </Col>
+
+      <Col xs={24} sm={12}>
+        <Card className="info-card">
+          {numericInput(
+            merchantProfile.phone,
+            (v) => setMerchantProfile((p) => ({ ...p, phone: v })),
+            "Số điện thoại", 10
+          )}
+        </Card>
+      </Col>
+
+      <Col xs={24} sm={12}>
+        <Card className="info-card">
+          {numericInput(
+            merchantProfile.cccd,
+            (v) => setMerchantProfile((p) => ({ ...p, cccd: v })),
+            "CCCD", 12
+          )}
+        </Card>
+      </Col>
+
+      <Col xs={24} sm={12}>
+        <Card className="info-card">
+          <CommonInput
+            placeholder="Tên ngân hàng"
+            value={merchantProfile.bankName}
+            disabled={!editing}
+            onChange={(e) => setMerchantProfile((p) => ({ ...p, bankName: e.target.value }))}
+          />
+        </Card>
+      </Col>
+
+      <Col xs={24} sm={12}>
+        <Card className="info-card">
+          {numericInput(
+            merchantProfile.bankAccount,
+            (v) => setMerchantProfile((p) => ({ ...p, bankAccount: v })),
+            "Số tài khoản ngân hàng"
+          )}
+        </Card>
+      </Col>
+
+      <Col xs={24} sm={12}>
+        <Card className="info-card">
+          <CommonInput
+            placeholder="Giấy phép kinh doanh"
+            value={merchantProfile.businessLicense}
+            disabled={!editing}
+            onChange={(e) => setMerchantProfile((p) => ({ ...p, businessLicense: e.target.value }))}
+          />
+        </Card>
+      </Col>
+
+      <Col xs={24}>
+        <Card className="info-card">
+          <CommonInput
+            placeholder="Địa chỉ"
+            value={merchantProfile.address}
+            disabled={!editing}
+            onChange={(e) => setMerchantProfile((p) => ({ ...p, address: e.target.value }))}
+          />
+        </Card>
+      </Col>
+    </>
+  );
+
+  // ── Render: EMPLOYEE ───────────────────────────────────────────────────────
+
+  const renderEmployeeFields = () => (
+    <>
+      <Col xs={24} sm={12}>
+        <Card className="info-card">
+          <CommonInput placeholder="Mã nhân viên" value={employeeProfile.mnv} disabled />
+        </Card>
+      </Col>
+
+      <Col xs={24} sm={12}>
+        <Card className="info-card">
+          <CommonInput
+            placeholder="Họ và tên"
+            value={employeeProfile.fullName}
+            disabled={!editing}
+            onChange={(e) => setEmployeeProfile((p) => ({ ...p, fullName: e.target.value }))}
+          />
+        </Card>
+      </Col>
+
+      <Col xs={24} sm={12}>
+        <Card className="info-card">
+          {numericInput(
+            employeeProfile.phone,
+            (v) => setEmployeeProfile((p) => ({ ...p, phone: v })),
+            "Số điện thoại", 10
+          )}
+        </Card>
+      </Col>
+
+      <Col xs={24} sm={12}>
+        <Card className="info-card">
+          <Select
+            placeholder="Giới tính"
+            value={employeeProfile.gender || undefined}
+            disabled={!editing}
+            onChange={(v) => setEmployeeProfile((p) => ({ ...p, gender: v }))}
+            style={{ width: "100%" }}
+            options={[
+              { label: "Nam", value: "Nam" },
+              { label: "Nữ", value: "Nữ" },
+            ]}
+          />
+        </Card>
+      </Col>
+
+      <Col xs={24} sm={12}>
+        <Card className="info-card">
+          <DatePicker
+            placeholder="Ngày sinh"
+            value={employeeProfile.dateTime}
+            disabled={!editing}
+            onChange={(date) => setEmployeeProfile((p) => ({ ...p, dateTime: date }))}
+            className="custom-datepicker"
+            format="DD/MM/YYYY"
+          />
+        </Card>
+      </Col>
+
+      <Col xs={24} sm={12}>
+        <Card className="info-card">
+          <CommonInput
+            placeholder="Ngày tham gia"
+            value={
+              employeeProfile.joinDate
+                ? dayjs(employeeProfile.joinDate).format("DD/MM/YYYY")
+                : ""
+            }
+            disabled
+          />
+        </Card>
+      </Col>
+
+      <Col xs={24} sm={12}>
+        <Card className="info-card">
+          {numericInput(
+            employeeProfile.cccd,
+            (v) => setEmployeeProfile((p) => ({ ...p, cccd: v })),
+            "CCCD", 12
+          )}
+        </Card>
+      </Col>
+
+      <Col xs={24} sm={12}>
+        <Card className="info-card">
+          <CommonInput
+            placeholder="Tên ngân hàng"
+            value={employeeProfile.bankName}
+            disabled={!editing}
+            onChange={(e) => setEmployeeProfile((p) => ({ ...p, bankName: e.target.value }))}
+          />
+        </Card>
+      </Col>
+
+      <Col xs={24} sm={12}>
+        <Card className="info-card">
+          {numericInput(
+            employeeProfile.accountBank,
+            (v) => setEmployeeProfile((p) => ({ ...p, accountBank: v })),
+            "Số tài khoản ngân hàng"
+          )}
+        </Card>
+      </Col>
+
+      <Col xs={24}>
+        <Card className="info-card">
+          <CommonInput
+            placeholder="Địa chỉ"
+            value={employeeProfile.address}
+            disabled={!editing}
+            onChange={(e) => setEmployeeProfile((p) => ({ ...p, address: e.target.value }))}
+          />
+        </Card>
+      </Col>
+    </>
+  );
+
+  // ── JSX ────────────────────────────────────────────────────────────────────
 
   return (
     <div>
       <div
         style={{
-          marginBottom: 16,
-          cursor: "pointer",
-          display: "flex",
-          alignItems: "center",
-          gap: 8,
-          fontSize: 16,
-          fontWeight: 500,
-          padding: "10px",
-          color: "#4C1D95",
+          marginBottom: 16, cursor: "pointer", display: "flex",
+          alignItems: "center", gap: 8, fontSize: 16, fontWeight: 500,
+          padding: "10px", color: "#4C1D95",
         }}
         onClick={() => navigate(-1)}
       >
@@ -217,6 +544,8 @@ const CustomerProfile: React.FC = () => {
       <div className="customer-profile">
         <BgWhiteBorder className="paddingProfile">
           <Row gutter={[24, 24]} className="profile-row">
+
+            {/* ── LEFT: Avatar ── */}
             <Col xs={24} md={6} className="profile-left">
               <Avatar
                 size={160}
@@ -231,19 +560,7 @@ const CustomerProfile: React.FC = () => {
                   <ButtonCustom text="Đổi mật khẩu" onClick={() => setPasswordModalOpen(true)} />
                 </div>
               ) : (
-                <Upload
-                  showUploadList={false}
-                  beforeUpload={(file) => {
-                    const isLt2M = file.size / 1024 / 1024 < 2;
-                    if (!isLt2M) {
-                      message.error("Ảnh phải nhỏ hơn 2MB!");
-                      return Upload.LIST_IGNORE;
-                    }
-                    setAvatarFile(file);
-                    setAvatarPreview(URL.createObjectURL(file));
-                    return false;
-                  }}
-                >
+                <Upload showUploadList={false} beforeUpload={beforeUploadAvatar}>
                   <div className="profile-action">
                     <ButtonCustom text="Đổi ảnh đại diện" />
                   </div>
@@ -251,113 +568,17 @@ const CustomerProfile: React.FC = () => {
               )}
             </Col>
 
+            {/* ── RIGHT: Fields ── */}
             <Col xs={24} md={18}>
               <Row gutter={[16, 16]}>
-                {role !== "CUSTOME" && (
-                  <Col xs={24} sm={12}>
-                    <Card className="info-card">
-                      <CommonInput placeholder="Mã nhân viên" value={customer.mnv} disabled />
-                    </Card>
-                  </Col>
-                )}
-
-                <Col xs={24} sm={12}>
-                  <Card className="info-card">
-                    <CommonInput
-                      placeholder="Tên"
-                      value={customer.fullName}
-                      disabled={!editing}
-                      onChange={(e) => handleChange("fullName", e.target.value)}
-                    />
-                  </Card>
-                </Col>
-
-                <Col xs={24} sm={12}>
-                  <Card className="info-card">
-                    <CommonInput value={customer.gmail} disabled />
-                  </Card>
-                </Col>
-
-                <Col xs={24} sm={12}>
-                  <Card className="info-card">
-                    <CommonInput
-                      placeholder="Số điện thoại"
-                      value={customer.phone}
-                      disabled={!editing}
-              
-                      onChange={(e) => handleChange("phone", e.target.value)}
-                    />
-                    {renderError("phone")}
-                  </Card>
-                </Col>
-
-                <Col xs={24} sm={12}>
-                  <Card className="info-card">
-                    <CommonInput
-                      placeholder="Số tài khoản"
-                      value={customer.accountBank}
-                      disabled={!editing}
-          
-                      onChange={(e) => handleChange("accountBank", e.target.value)}
-                    />
-                    {renderError("accountBank")}
-                  </Card>
-                </Col>
-
-                <Col xs={24} sm={12}>
-                  <Card className="info-card">
-                    <CommonInput
-                      placeholder="CCCD"
-                      value={customer.cccd}
-                      disabled={!editing}
-            
-                      onChange={(e) => handleChange("cccd", e.target.value)}
-                    />
-                    {renderError("cccd")}
-                  </Card>
-                </Col>
-
-                <Col xs={24}>
-                  <Card className="info-card">
-                    <CommonInput
-                      placeholder="Địa chỉ"
-                      value={customer.address}
-                      disabled={!editing}
-                      onChange={(e) => handleChange("address", e.target.value)}
-                    />
-                  </Card>
-                </Col>
-
-                {role !== "CUSTOME" && (
-                  <>
-                    <Col xs={24} sm={12}>
-                      <Card className="info-card">
-                        <CommonInput
-                          placeholder="Giới tính"
-                          value={customer.gender}
-                          disabled={!editing}
-                          onChange={(e) => handleChange("gender", e.target.value)}
-                        />
-                      </Card>
-                    </Col>
-
-                    <Col xs={24} sm={12}>
-                      <Card className="info-card">
-                        <CommonInput
-                          placeholder="Ngân hàng"
-                          value={customer.bankName}
-                          disabled={!editing}
-                          onChange={(e) => handleChange("bankName", e.target.value)}
-                        />
-                      </Card>
-                    </Col>
-                  </>
-                )}
+                {role === "CUSTOME" && renderUserFields()}
+                {role === "MERCHANT" && renderMerchantFields()}
+                {role === "EMPLOYEE" && renderEmployeeFields()}
               </Row>
 
               {editing && (
                 <div className="profile-buttons">
-                  <ButtonCustom text="Huỷ" onClick={() => { setEditing(false); setErrors({}); }} />
+                  <ButtonCustom text="Huỷ" onClick={() => setEditing(false)} />
                   <ButtonCustom text="Lưu" onClick={handleSubmit} />
                 </div>
               )}
@@ -366,6 +587,7 @@ const CustomerProfile: React.FC = () => {
         </BgWhiteBorder>
       </div>
 
+      {/* ── Password Modal ── */}
       <Modal
         title="Đổi mật khẩu"
         open={passwordModalOpen}
@@ -384,7 +606,6 @@ const CustomerProfile: React.FC = () => {
               onChange={(e) => setNewPassword(e.target.value)}
             />
           </div>
-
           <div>
             <div style={{ marginBottom: 6, fontSize: 13, color: "#555" }}>Xác nhận mật khẩu</div>
             <CommonInput
@@ -394,7 +615,6 @@ const CustomerProfile: React.FC = () => {
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
           </div>
-
           <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 4 }}>
             <ButtonCustom text="Huỷ" onClick={handleClosePasswordModal} />
             <ButtonCustom

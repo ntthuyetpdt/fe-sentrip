@@ -71,16 +71,13 @@ const AdminLayout = ({ children, breadcrumb = [] }: AdminLayoutProps) => {
 
 
   const userMenu: MenuProps["items"] = [
-    {
-      key: "profile",
-      label: "Trang cá nhân",
-    },
-    {
-      key: "logout",
-      label: "Đăng xuất",
-    },
+    ...(role !== "ADMIN"
+      ? [{ key: "profile", label: "Trang cá nhân" }]
+      : []),
+    { key: "logout", label: "Đăng xuất" },
   ];
 
+  
   const handleUserMenu: MenuProps["onClick"] = ({ key }) => {
     if (key === "profile") {
       navigate("/profile");
