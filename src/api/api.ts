@@ -147,6 +147,10 @@ export const deleteMechant = async (id: any) => {
   const res = await axiosInstance.post(`/merchant/delete/${id}`);
   return res.data;
 };
+export const UpdateProfile = async(body :any)=>{
+  const res =await axiosInstance.post("mechanr/update",body);
+  return res.data;
+}
 
 export const searchMechant = async (params: any) => {
   const res = await axiosInstance.get("/merchant/search", {

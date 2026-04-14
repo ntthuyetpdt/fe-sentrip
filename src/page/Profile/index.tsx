@@ -198,7 +198,7 @@ const CustomerProfile: React.FC = () => {
             fullName: employeeProfile.fullName,
             phone: employeeProfile.phone,
             gender: employeeProfile.gender,
-            dateTime: employeeProfile.dateTime?.toISOString() ?? null,
+            dateTime: employeeProfile.dateTime?.format("YYYY-MM-DD") ?? null,
             address: employeeProfile.address,
             cccd: employeeProfile.cccd,
             bankName: employeeProfile.bankName,
@@ -573,7 +573,7 @@ const CustomerProfile: React.FC = () => {
               <Row gutter={[16, 16]}>
                 {role === "CUSTOME" && renderUserFields()}
                 {role === "MERCHANT" && renderMerchantFields()}
-                {role === "EMPLOYEE" && renderEmployeeFields()}
+                {role !== "CUSTOME" && role !== "MERCHANT" && role !== "" && renderEmployeeFields()}
               </Row>
 
               {editing && (
