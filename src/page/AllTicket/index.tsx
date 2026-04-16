@@ -6,7 +6,8 @@ import ModalCustom from "../../components/custom/modal";
 import ButtonCustom from "../../components/custom/button";
 import { Empty, message } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
-
+import { DatePicker } from "antd";
+import dayjs, { Dayjs } from "dayjs";
 interface Product {
     id: number;
     img: string | null;
@@ -19,9 +20,11 @@ interface Product {
     status: any;
     additionalService: string;
     merchantId: number;
+    address: string;
 }
 
 const MAX_PRICE = 20_000_000;
+
 
 function formatPrice(v: number): string {
     if (v >= 1_000_000) return (v / 1_000_000).toFixed(v % 1_000_000 === 0 ? 0 : 1) + " Tr";
@@ -37,14 +40,16 @@ const AllTicket = () => {
     const [open, setOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [quantity, setQuantity] = useState(1);
-
+    const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
     const [productName, setProductName] = useState("");
     const [address, setAddress] = useState("");
     const [priceMin, setPriceMin] = useState(0);
     const [priceMax, setPriceMax] = useState(MAX_PRICE);
 
     const fillRef = useRef<HTMLDivElement>(null);
-
+    const disabledDate = (current: dayjs.Dayjs) => {
+        return current && current < dayjs().startOf('day');
+    };
     useEffect(() => { fetchProducts(); }, []);
 
     useEffect(() => {
@@ -81,10 +86,10 @@ const AllTicket = () => {
     ) => {
         let filtered = source;
         if (name) filtered = filtered.filter((p) =>
-            p.productName.toLowerCase().includes(name.toLowerCase())
+            (p.productName ?? "").toLowerCase().includes(name.toLowerCase())
         );
         if (addr) filtered = filtered.filter((p) =>
-            p.additionalService?.toLowerCase().includes(addr.toLowerCase())
+            (p.address ?? "").toLowerCase().includes(addr.toLowerCase())  // ✅ đổi additionalService → address
         );
         filtered = filtered.filter((p) => {
             const n = Number(p.price);
@@ -92,7 +97,6 @@ const AllTicket = () => {
         });
         setProducts(filtered);
     };
-
     const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = Math.min(Number(e.target.value), priceMax - 50_000);
         setPriceMin(val);
@@ -145,10 +149,14 @@ const AllTicket = () => {
 
     const handleOrder = async () => {
         if (!selectedProduct) return;
+        if (!selectedDate) {
+            message.warning("Vui lòng chọn ngày sử dụng");
+            return;
+        }
         try {
             await orderTicket({
                 merchantId: selectedProduct.merchantId,
-                items: [{ productId: selectedProduct.id, quantity }],
+                items: [{ productId: selectedProduct.id, quantity, NSD: selectedDate.format("YYYY-MM-DD") }],
             });
             setOpen(false);
             setQuantity(1);
@@ -245,6 +253,7 @@ const AllTicket = () => {
                         price={item.price}
                         refundable={item.refundable}
                         status={item.status}
+                        address={item.address}
                         additionalService={item.additionalService}
                         onOrder={handleOpenModal}
                     />
@@ -256,7 +265,15 @@ const AllTicket = () => {
                 {selectedProduct && (
                     <div className="modal-order">
                         <h3 className="product-name">{selectedProduct.productName}</h3>
-                        <div className="modal-middle">
+                        <div className="modal-middle" style={{ display: 'flex', flexDirection: "column" }}>
+                            <div className="price" style={{ display: 'flex', flexDirection: "column", gap: "2px", alignItems: "center" }}>
+                                <span>Ngày sử dụng: </span>
+                                <DatePicker
+                                    disabledDate={disabledDate}
+                                    value={selectedDate}
+                                    onChange={(date) => setSelectedDate(date)}
+                                />
+                            </div>
                             <div className="price">
                                 Giá: {Number(selectedProduct.price).toLocaleString()} đ
                             </div>

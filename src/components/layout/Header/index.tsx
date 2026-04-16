@@ -103,7 +103,7 @@ const HeaderCustom = () => {
                     <p>
                       {t("Hi")},{" "}
                       <strong>
-                        {profile?.name || "Chưa có tên"}
+                        {profile?.name || "Bạn"}
                       </strong>{" "}
                       <DownOutlined
                         style={{

@@ -63,6 +63,8 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({
 
       const payload = {
         role: values.Role,
+        mnv: values.mnv,
+        JoinDate: values.JoinDate
       };
 
       onSubmit?.(payload as any);
@@ -89,7 +91,7 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({
               name="mnv"
               rules={[{ required: false, message: "Nhập mã nhân viên" }]}
             >
-              <CommonInput disabled />
+              <CommonInput />
             </Form.Item>
           </Col>
 
@@ -112,11 +114,11 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({
                 disabled={isView}
                 placeholder="Chọn chức vụ"
                 options={[
-                  { label: "ADMIN", value: "ADMIN" },
-                  { label: "EMPLOYEE", value: "EMPLOYEE" },
-                  { label: "ACCOUNTANT", value: "ACCOUNTANT" },
-                  { label: "CUSTOMER", value: "CUSTOMER" },
-                  { label: "MERCHANT", value: "MERCHANT" },
+                  // { label: "ADMIN", value: "ADMIN" },
+                  { label: "EMPLOYEE", value: "2" },
+                  { label: "ACCOUNTANT", value: "3" },
+                  // { label: "CUSTOMER", value: "CUSTOMER" },
+                  // { label: "MERCHANT", value: "MERCHANT" },
                 ]}
               />
             </Form.Item>
@@ -210,7 +212,7 @@ const EmployeeModal: React.FC<EmployeeModalProps> = ({
             >
               <DatePicker
                 style={{ width: "100%" }}
-                disabled
+                
                 format="DD/MM/YYYY"
               />
             </Form.Item>

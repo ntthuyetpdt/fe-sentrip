@@ -142,12 +142,12 @@ const QuanLiNhanVien = () => {
 
   return (
     <div>
-      <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap", alignItems: "center" }}>
+      {/* <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap", alignItems: "center" }}>
         <ButtonCustom
           text="Thêm nhân viên"
           onClick={() => { setSelectedEmployee(null); setMode("create"); setModalOpen(true); }}
         />
-      </div>
+      </div> */}
 
       <div style={{ display: "flex", gap: 8, marginBottom: 16, flexWrap: "wrap", alignItems: "center", justifyContent:'end' }}>
         <input

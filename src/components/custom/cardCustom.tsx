@@ -37,6 +37,7 @@ type OrderCardProps = {
   additionalService?: string;
   orderCode?: string;
   quantities?: number | string;
+  address?: string;
   onCancel?: () => void;
   onPay?: () => void;
   onOrder?: (id: number) => void;
@@ -54,6 +55,7 @@ const OrderCard = ({
   status,
   additionalService,
   quantities,
+  address,
   viewProduct = false,
   viewCart = false,
   orderCode,
@@ -90,7 +92,11 @@ const OrderCard = ({
             Dịch vụ đi kèm: {additionalService}
           </p>
         )}
-
+        {address && (
+          <p className="desc">
+            Địa chỉ: {address}
+          </p>
+        )}
         {refundable !== undefined && (
           <p className="extra">
             <span>Hoàn huỷ: </span>

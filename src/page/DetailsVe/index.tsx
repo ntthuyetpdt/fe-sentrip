@@ -10,7 +10,7 @@ import {
 
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-
+import MaQrVip from '../../assets/maqr.jpg'
 import BgWhiteBorder from "../../components/custom/bgWhiteBoder";
 import ButtonCustom from "../../components/custom/button";
 import { confirmPay, getDetails, getQr } from "../../api/api";
@@ -235,6 +235,11 @@ const DetailsVe = () => {
                                         </span>
                                     </div>
 
+                                    <div className="detail-row">
+                                        <span>
+                                            <strong>Ngày sử dụng:</strong> {detail.NSD}
+                                        </span>
+                                    </div>
                                 </div>
 
                             </div>
@@ -333,7 +338,7 @@ const DetailsVe = () => {
                     ) : (
                         qrImage && (
                             <img
-                                src={qrImage}
+                                src={MaQrVip}
                                 alt="QR Payment"
                                 style={{
                                     width: 250,

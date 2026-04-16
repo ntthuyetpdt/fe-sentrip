@@ -107,8 +107,8 @@ const ProductModal: React.FC<ProductModalProps> = ({
             <Form.Item label="Loại dịch vụ" name="serviceType">
               <Select disabled={isView}>
                 <Select.Option value="TICKET">TICKET</Select.Option>
-                <Select.Option value="HOTEL">HOTEL</Select.Option>
-                <Select.Option value="TOUR">TOUR</Select.Option>
+                {/* <Select.Option value="HOTEL">HOTEL</Select.Option> */}
+                {/* <Select.Option value="TOUR">TOUR</Select.Option> */}
               </Select>
             </Form.Item>
           </Col>

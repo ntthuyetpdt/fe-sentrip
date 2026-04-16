@@ -70,7 +70,7 @@ const AddAcc = () => {
                         placeholder="Chọn role"
                         variant="purple"
                         options={[
-                            { label: "ADMIN", value: "1" },
+                            // { label: "ADMIN", value: "1" },
                             { label: "EMPLOYEE", value: "2" },
                             { label: "ACCOUNTANT", value: "3" }
                         ]}
