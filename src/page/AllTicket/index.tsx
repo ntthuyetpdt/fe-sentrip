@@ -156,7 +156,8 @@ const AllTicket = () => {
         try {
             await orderTicket({
                 merchantId: selectedProduct.merchantId,
-                items: [{ productId: selectedProduct.id, quantity, NSD: selectedDate.format("YYYY-MM-DD") }],
+                items: [{ productId: selectedProduct.id, quantity,  }],
+                NSD: selectedDate.format("YYYY-MM-DD")
             });
             setOpen(false);
             setQuantity(1);

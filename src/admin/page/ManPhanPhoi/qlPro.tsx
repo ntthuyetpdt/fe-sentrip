@@ -272,23 +272,23 @@ const ProductManagement = () => {
     setPriceMax("");
   };
 
-  const filteredData = data.filter((item) => {
-    const matchName = item.productName
-      .toLowerCase()
-      .includes(filterProductName.toLowerCase());
+const filteredData = data.filter((item) => {
+  const matchName = (item.productName ?? "")
+    .toLowerCase()
+    .includes(filterProductName.toLowerCase());
 
-    let matchPrice = true;
-    const price = Number(item.price);
-    if (priceMin !== "" && priceMax !== "") {
-      matchPrice = price >= Number(priceMin) && price <= Number(priceMax);
-    } else if (priceMin !== "") {
-      matchPrice = price >= Number(priceMin);
-    } else if (priceMax !== "") {
-      matchPrice = price <= Number(priceMax);
-    }
+  let matchPrice = true;
+  const price = Number(item.price);
+  if (priceMin !== "" && priceMax !== "") {
+    matchPrice = price >= Number(priceMin) && price <= Number(priceMax);
+  } else if (priceMin !== "") {
+    matchPrice = price >= Number(priceMin);
+  } else if (priceMax !== "") {
+    matchPrice = price <= Number(priceMax);
+  }
 
-    return matchName && matchPrice;
-  });
+  return matchName && matchPrice;
+});
 
   const fetchData = async () => {
     try {

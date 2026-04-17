@@ -21,7 +21,7 @@ export const viewProduct = async () => {
 };
 
 export const orderTicket = async (body: any) => {
-  const res = await axiosInstance.post("/order/create", body);
+  const res = await axiosInstance.post("order/create", body);
   return res.data;
 };
 

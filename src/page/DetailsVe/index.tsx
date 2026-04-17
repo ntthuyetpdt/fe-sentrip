@@ -332,21 +332,14 @@ const DetailsVe = () => {
             >
 
                 <div style={{ textAlign: "center" }}>
-
-                    {loadingQr ? (
-                        <Spin />
-                    ) : (
-                        qrImage && (
-                            <img
-                                src={MaQrVip}
-                                alt="QR Payment"
-                                style={{
-                                    width: 250,
-                                    marginBottom: 20
-                                }}
-                            />
-                        )
-                    )}
+                    <img
+                        src={MaQrVip}
+                        alt="QR Payment"
+                        style={{
+                            width: 250,
+                            marginBottom: 20
+                        }}
+                    />
 
                     <div style={{
                         display: "flex",
