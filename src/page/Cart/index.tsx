@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Checkbox, Empty, message } from "antd";
+import { Checkbox, DatePicker, Empty, message } from "antd";
 import OrderCard from "../../components/custom/cardCustom";
-import { addCart, deleteCart, orderTicket, viewCard } from "../../api/api";
+import { addCart, deleteCart, orderTicket, updateCart, viewCard } from "../../api/api";
 import BgWhiteBorder from "../../components/custom/bgWhiteBoder";
 import ModalCustom from "../../components/custom/modal";
 import ButtonCustom from "../../components/custom/button";
+import dayjs, { Dayjs } from "dayjs";
 
 interface CartItem {
   cartItemId: number;
@@ -14,6 +15,7 @@ interface CartItem {
   quantity: number;
   img: string;
   merchantId: number;
+  NSD: string;
 }
 
 const Index = () => {
@@ -24,10 +26,11 @@ const Index = () => {
   const [openModal, setOpenModal] = useState(false);
   const [currentItem, setCurrentItem] = useState<CartItem | null>(null);
   const [quantity, setQuantity] = useState(1);
+  const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs());
 
   const getCart = async () => {
     const res = await viewCard();
-    setCart(res?.data  || []);
+    setCart(res?.data || []);
   };
 
   useEffect(() => {
@@ -50,42 +53,62 @@ const Index = () => {
     }
   };
 
-
-
   const openEditModal = (item: CartItem) => {
     setCurrentItem(item);
     setQuantity(item.quantity);
+    // Nếu item có NSD thì dùng, không thì dùng ngày hiện tại
+    setSelectedDate(item.NSD ? dayjs(item.NSD) : dayjs());
     setOpenModal(true);
   };
 
+  // Disable những ngày đã qua
+  const disabledDate = (current: Dayjs) => {
+    return current && current < dayjs().startOf("day");
+  };
+
+  // Chỉnh sửa số lượng + ngày - dùng updateCart
   const handleSaveQuantity = async () => {
     if (!currentItem) return;
 
     const newCart = cart.map((item) =>
       item.cartItemId === currentItem.cartItemId
-        ? { ...item, quantity }
+        ? { ...item, quantity, NSD: selectedDate.format("YYYY-MM-DD") }
         : item
     );
 
     setCart(newCart);
     setOpenModal(false);
 
-    const body = {
-      productId: currentItem.productId,
-      quantity: quantity
-    };
-
     try {
-      await addCart(body);
+      await updateCart(currentItem.cartItemId, {
+        quantity: quantity,
+        NSD: selectedDate.format("YYYY-MM-DD"),
+      });
       message.success("Cập nhật giỏ hàng thành công!");
     } catch (error) {
       message.error("Cập nhật giỏ hàng thất bại!");
     }
   };
 
-  const handleOrder = async () => {
+  // Đặt 1 đơn riêng lẻ
+  const handleOrderSingle = async (item: CartItem) => {
+    try {
+      await orderTicket({
+        merchantId: item.merchantId,
+        items: [{ productId: item.productId, quantity: item.quantity }],
+        NSD: dayjs(item.NSD).format("YYYY-MM-DD"),
+      });
+      message.success("Đặt hàng thành công");
+      window.location.href = "/orders";
+    } catch {
+      message.error("Đặt hàng thất bại");
+    }
+  };
+
+  // Đặt nhiều đơn khi ở edit mode
+  const handleOrderMultiple = async () => {
     if (selected.length === 0) {
-      message.warning("Vui lòng chọn dịch vụ");
+      message.warning("Vui lòng chọn ít nhất 1 dịch vụ");
       return;
     }
 
@@ -93,28 +116,25 @@ const Index = () => {
       selected.includes(item.cartItemId)
     );
 
-    const body = {
-      merchantId: selectedItems[0].merchantId,
-      items: selectedItems.map((item) => ({
-        productId: item.productId,
-        quantity: item.quantity
-      }))
-    };
-
     try {
-      await orderTicket(body);
-
-      message.success("Đặt hàng thành công");
-
-      // window.location.href = "/orders";
-
-    } catch (error) {
+      for (const item of selectedItems) {
+        await orderTicket({
+          merchantId: item.merchantId,
+          items: [{ productId: item.productId, quantity: item.quantity }],
+          NSD: dayjs(item.NSD).format("YYYY-MM-DD"),
+        });
+      }
+      message.success(`Đặt hàng thành công ${selectedItems.length} đơn`);
+      window.location.href = "/orders";
+    } catch {
       message.error("Đặt hàng thất bại");
     }
   };
 
-  const handleIncrease = () => {
-    setQuantity((prev) => prev + 1);
+  const handleIncrease = () => setQuantity((prev) => prev + 1);
+
+  const handleDecrease = () => {
+    if (quantity > 1) setQuantity((prev) => prev - 1);
   };
 
   const handleDelete = async () => {
@@ -124,33 +144,18 @@ const Index = () => {
     }
 
     try {
-
       for (const id of selected) {
         await deleteCart(id);
       }
-
-      const newCart = cart.filter(
-        (item) => !selected.includes(item.cartItemId)
-      );
-
-      setCart(newCart);
+      setCart(cart.filter((item) => !selected.includes(item.cartItemId)));
       setSelected([]);
-
       message.success("Xoá dịch vụ thành công");
-
     } catch (error) {
       message.error("Xoá dịch vụ thất bại");
     }
   };
 
-  const handleDecrease = () => {
-    if (quantity > 1) {
-      setQuantity((prev) => prev - 1);
-    }
-  };
-
-  const totalPrice =
-    currentItem ? Number(currentItem.price) * quantity : 0;
+  const totalPrice = currentItem ? Number(currentItem.price) * quantity : 0;
 
   return (
     <div className="cart-page">
@@ -162,21 +167,15 @@ const Index = () => {
               <h3>Giỏ hàng</h3>
 
               {!editMode ? (
-                <ButtonCustom
-                  text="Chỉnh sửa"
-                  onClick={() => setEditMode(true)}
-                />
+                <ButtonCustom text="Chọn" onClick={() => setEditMode(true)} />
               ) : (
                 <div className="edit-actions">
-                  <Checkbox
-                    onChange={(e) =>
-                      handleSelectAll(e.target.checked)
-                    }
-                  >
+                  <Checkbox onChange={(e) => handleSelectAll(e.target.checked)}>
                     Chọn tất cả
                   </Checkbox>
 
                   <ButtonCustom text="Xoá" onClick={handleDelete} />
+                  <ButtonCustom text="Đặt hàng" onClick={handleOrderMultiple} />
 
                   <ButtonCustom
                     text="Xong"
@@ -195,11 +194,8 @@ const Index = () => {
           <div className="cart-body">
 
             {cart?.length === 0 ? (
-
               <Empty description="Giỏ hàng của bạn đang trống" />
-
             ) : (
-
               cart.map((item) => (
                 <div key={item.cartItemId} className="cart-item">
 
@@ -220,14 +216,14 @@ const Index = () => {
                       price={Number(item.price) * item.quantity}
                       viewProduct
                       viewCart
+                      NSD={item.NSD}
                       onPay={() => openEditModal(item)}
-                      onOrder={handleOrder}
+                      onOrder={() => handleOrderSingle(item)}
                     />
                   </div>
 
                 </div>
               ))
-
             )}
 
           </div>
@@ -241,14 +237,26 @@ const Index = () => {
           {currentItem && (
             <div className="modal-order">
 
-              <h3 className="product-name">
-                {currentItem.productName}
-              </h3>
+              <h3 className="product-name">{currentItem.productName}</h3>
 
-              <div className="modal-middle">
+              <div className="modal-middle" style={{ display: 'flex', flexDirection: "column" }}>
 
                 <div className="price">
                   Giá: {Number(currentItem.price).toLocaleString()} đ
+                </div>
+
+                {/* Chỉnh sửa ngày - disable ngày đã qua */}
+                <div className="date-picker-box" style={{ display: 'flex', flexDirection: "column", alignItems: 'center', gap: '2px' }}>
+                  <span style={{ fontSize: "20px", fontWeight: "600" }}>Ngày sử dụng:</span>
+                  <DatePicker
+                    value={selectedDate}
+                    onChange={(date) => {
+                      if (date) setSelectedDate(date);
+                    }}
+                    disabledDate={disabledDate}
+                    format="DD/MM/YYYY"
+                    allowClear={false}
+                  />
                 </div>
 
                 <div className="quantity-box">
@@ -264,10 +272,7 @@ const Index = () => {
               </div>
 
               <div className="modal-actions">
-                <ButtonCustom
-                  text="Lưu"
-                  onClick={handleSaveQuantity}
-                />
+                <ButtonCustom text="Lưu" onClick={handleSaveQuantity} />
               </div>
 
             </div>

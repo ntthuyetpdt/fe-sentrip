@@ -86,13 +86,18 @@ export const deleteCart = async (cartItemId: any) => {
   return res.data;
 };
 
+export const updateCart = async (cartItemId: any, body: any) => {
+  const res = await axiosInstance.post(`/cart/update/${cartItemId}`, body);
+  return res.data;
+};
+
 export const confirmPay = async (id: any) => {
   const res = await axiosInstance.post(`/payments/confirmation?url=${id}`);
   return res.data;
 };
 
 export const myTicket = async () => {
-  const res = await axiosInstance.get("/customer/ticketsMy");
+  const res = await axiosInstance.get("/customer/tickets");
   return res.data;
 };
 

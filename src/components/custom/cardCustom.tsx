@@ -41,6 +41,7 @@ type OrderCardProps = {
   onCancel?: () => void;
   onPay?: () => void;
   onOrder?: (id: number) => void;
+  NSD?: string;
 };
 
 const OrderCard = ({
@@ -59,6 +60,7 @@ const OrderCard = ({
   viewProduct = false,
   viewCart = false,
   orderCode,
+  NSD,
   onCancel,
   onPay,
   onOrder,
@@ -122,8 +124,12 @@ const OrderCard = ({
           </div>
         )}
 
-        {(price || quantities) && (
+        {(price || quantities || NSD) && (
           <div className="price">
+            {NSD && (
+              <span>Ngày sử dụng: {NSD}</span>
+            )}
+            <br />
             {quantities && (
               <span>Số lượng: {quantities}</span>
             )}

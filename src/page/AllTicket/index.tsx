@@ -125,12 +125,12 @@ const AllTicket = () => {
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") handleSearch();
+        if (e.key === "Enter") handleSearch(); 
     };
 
     const handleAddCart = async () => {
         try {
-            await addCart({ productId: selectedProduct?.id, quantity });
+            await addCart({ productId: selectedProduct?.id, quantity, NSD: selectedDate?.format("YYYY-MM-DD") });
             message.success("Thêm vào giỏ hàng thành công!");
             window.location.href = "/my-cart";
         } catch {
