@@ -20,44 +20,42 @@ export interface OrderInfor {
   paymentStatus: string | null;
 }
 
-const STATUS_OPTIONS = [
-  { value: "PENDING", label: "Chờ xác nhận" },
-  { value: "PENDING_PAYMENT", label: "Chờ thanh toán" },
-  { value: "CONFIRM", label: "Đã xác nhận" },
-  { value: "CONFIRMED", label: "Đã xác nhận" },
-  { value: "PAID", label: "Đã thanh toán" },
-  { value: "COMPLETED", label: "Hoàn thành" },
-  { value: "CANCELLED", label: "Hủy vé" },
-  { value: "REFUND_REQUESTED", label: "Yêu cầu hoàn vé" },
-  { value: "REFUNDED", label: "Hoàn tiền" },
+export const STATUS_OPTIONS = [
+  { value: "PENDING",          label: "Chờ xác nhận" },
+  // { value: "PENDING_PAYMENT",  label: "Chờ thanh toán" },
+  { value: "CONFIRM",        label: "Đã xác nhận" },
+  // { value: "PAID",             label: "Đã thanh toán" },
+  { value: "COMPLETED",        label: "Hoàn thành" },
+  // { value: "CANCELLED",        label: "Hủy vé" },
+  // { value: "REFUND_REQUESTED", label: "Yêu cầu hoàn vé" },
+  // { value: "REFUNDED",         label: "Hoàn tiền" },
 ];
 
-const STATUS_COLOR: Record<string, string> = {
-  PENDING: "#faad14",
-  PENDING_PAYMENT: "#1677ff",
-  CONFIRM: "#13c2c2",
-  CONFIRMED: "#13c2c2",
-  PAID: "#52c41a",
-  COMPLETED: "#237804",
-  CANCELLED: "#ff4d4f",
+export const STATUS_COLOR: Record<string, string> = {
+  PENDING:          "#faad14",
+  PENDING_PAYMENT:  "#1677ff",
+  CONFIRM:        "#13c2c2",
+  PAID:             "#52c41a",
+  COMPLETED:        "#237804",
+  CANCELLED:        "#ff4d4f",
   REFUND_REQUESTED: "#fa8c16",
-  REFUNDED: "#722ed1",
+  REFUNDED:         "#722ed1",
 };
 
-const PAYMENT_STATUS_OPTIONS = [
-  { value: "PENDING", label: "Chờ xử lý" },
+export const PAYMENT_STATUS_OPTIONS = [
+  { value: "PENDING",             label: "Chờ xử lý" },
   { value: "WAITING_FOR_PAYMENT", label: "Chờ thanh toán" },
-  { value: "SUCCESS", label: "Thành công" },
-  { value: "FAILED", label: "Thất bại" },
-  { value: "CANCELED", label: "Đã hủy" },
+  { value: "SUCCESS",             label: "Thành công" },
+  { value: "FAILED",              label: "Thất bại" },
+  { value: "CANCELED",            label: "Đã hủy" },
 ];
 
-const PAYMENT_STATUS_COLOR: Record<string, string> = {
-  PENDING: "#faad14",
+export const PAYMENT_STATUS_COLOR: Record<string, string> = {
+  PENDING:             "#faad14",
   WAITING_FOR_PAYMENT: "#1677ff",
-  SUCCESS: "#52c41a",
-  FAILED: "#ff4d4f",
-  CANCELED: "#8c8c8c",
+  SUCCESS:             "#52c41a",
+  FAILED:              "#ff4d4f",
+  CANCELED:            "#8c8c8c",
 };
 
 const InforPro = () => {
@@ -88,7 +86,6 @@ const InforPro = () => {
   // --- Filtered data ---
   const filteredData = useMemo(() => {
     return data.filter((item) => {
-      // Filter mã đơn
       if (
         filterOrderCode.trim() &&
         !item.orderCode.toLowerCase().includes(filterOrderCode.trim().toLowerCase())
@@ -96,7 +93,6 @@ const InforPro = () => {
         return false;
       }
 
-      // Filter khoảng giá
       const hasPriceFilter = priceMin !== "" || priceMax !== "";
       if (hasPriceFilter) {
         if (item.totalAmount === null || item.totalAmount === undefined) return false;
@@ -104,14 +100,10 @@ const InforPro = () => {
         if (priceMax !== "" && !isNaN(Number(priceMax)) && item.totalAmount > Number(priceMax)) return false;
       }
 
-      // Filter trạng thái đơn
-      if (filterStatus === "CONFIRM") {
-        if (item.orderStatus !== "CONFIRM" && item.orderStatus !== "CONFIRMED") return false;
-      } else if (filterStatus === "UNCONFIRMED") {
-        if (item.orderStatus === "CONFIRM" || item.orderStatus === "CONFIRMED") return false;
+      if (filterStatus !== undefined) {
+        if (item.orderStatus !== filterStatus) return false;
       }
 
-      // Filter trạng thái thanh toán
       if (filterPaymentStatus !== undefined) {
         if (filterPaymentStatus === "NONE") {
           if (item.paymentStatus !== null && item.paymentStatus !== undefined) return false;
@@ -143,7 +135,6 @@ const InforPro = () => {
     try {
       setExportingExcel(true);
       const res = await exportExcel();
-
       const blob = new Blob([res], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
@@ -155,7 +146,6 @@ const InforPro = () => {
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-
       message.success("Xuất Excel thành công!");
     } catch (err) {
       console.log(err);
@@ -169,9 +159,7 @@ const InforPro = () => {
     try {
       setExportingPDF(orderCode);
       const res = await exportPDF(orderCode);
-
       const pdfUrl = res.data;
-
       const link = document.createElement("a");
       link.href = pdfUrl;
       link.download = `hoa-don-${orderCode}.pdf`;
@@ -179,7 +167,6 @@ const InforPro = () => {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-
       message.success(`Xuất PDF đơn ${orderCode} thành công!`);
     } catch (err) {
       console.log(err);
@@ -197,20 +184,13 @@ const InforPro = () => {
 
   const handleUpdateStatus = async () => {
     if (!selectedForUpdate || !newStatus) return;
-
     try {
       setUpdatingStatus(true);
-
       await updateInforPro(
-        {
-          orderCode: selectedForUpdate.orderCode,
-          orderStatus: newStatus,
-        },
+        { orderCode: selectedForUpdate.orderCode, orderStatus: newStatus },
         selectedForUpdate.orderCode
       );
-
       message.success("Cập nhật trạng thái thành công!");
-
       setData((prev) =>
         prev.map((item) =>
           item.orderCode === selectedForUpdate.orderCode
@@ -218,7 +198,6 @@ const InforPro = () => {
             : item
         )
       );
-
       setStatusModalOpen(false);
       setSelectedForUpdate(null);
     } catch (err) {
@@ -266,13 +245,7 @@ const InforPro = () => {
       render: (status: string) => {
         const label = STATUS_OPTIONS.find((s) => s.value === status)?.label || status;
         return (
-          <span
-            style={{
-              color: STATUS_COLOR[status] || "#000",
-              fontWeight: 600,
-              whiteSpace: "nowrap",
-            }}
-          >
+          <span style={{ color: STATUS_COLOR[status] || "#000", fontWeight: 600, whiteSpace: "nowrap" }}>
             {label}
           </span>
         );
@@ -283,16 +256,9 @@ const InforPro = () => {
       dataIndex: "paymentStatus",
       render: (status: string | null) => {
         if (!status) return <span style={{ color: "#8c8c8c" }}>Chưa có</span>;
-        const label =
-          PAYMENT_STATUS_OPTIONS.find((s) => s.value === status)?.label || status;
+        const label = PAYMENT_STATUS_OPTIONS.find((s) => s.value === status)?.label || status;
         return (
-          <span
-            style={{
-              color: PAYMENT_STATUS_COLOR[status] || "#000",
-              fontWeight: 600,
-              whiteSpace: "nowrap",
-            }}
-          >
+          <span style={{ color: PAYMENT_STATUS_COLOR[status] || "#000", fontWeight: 600, whiteSpace: "nowrap" }}>
             {label}
           </span>
         );
@@ -315,9 +281,7 @@ const InforPro = () => {
               cursor: exportingPDF === record.orderCode ? "not-allowed" : "pointer",
               fontSize: 16,
             }}
-            onClick={() => {
-              if (!exportingPDF) handleExportPDF(record.orderCode);
-            }}
+            onClick={() => { if (!exportingPDF) handleExportPDF(record.orderCode); }}
             title="Xuất PDF"
           />
           {role !== "ADMIN" && record.paymentStatus === "SUCCESS" && (
@@ -336,9 +300,7 @@ const InforPro = () => {
     try {
       setLoading(true);
       const res = await viewInforPro();
-      if (res?.data) {
-        setData(res.data);
-      }
+      if (res?.data) setData(res.data);
     } catch (err) {
       console.log(err);
     } finally {
@@ -411,24 +373,14 @@ const InforPro = () => {
             value={filterStatus}
             onChange={(val) => setFilterStatus(val)}
             style={{ width: 210, height: 36 }}
-            options={[
-              {
-                value: "CONFIRM",
-                label: (
-                  <span style={{ color: STATUS_COLOR["CONFIRM"], fontWeight: 600 }}>
-                    Đã xác nhận
-                  </span>
-                ),
-              },
-              {
-                value: "UNCONFIRMED",
-                label: (
-                  <span style={{ color: "#faad14", fontWeight: 600 }}>
-                    Chưa xác nhận
-                  </span>
-                ),
-              },
-            ]}
+            options={STATUS_OPTIONS.map((s) => ({
+              value: s.value,
+              label: (
+                <span style={{ color: STATUS_COLOR[s.value], fontWeight: 600 }}>
+                  {s.label}
+                </span>
+              ),
+            }))}
           />
         </div>
 
@@ -446,9 +398,7 @@ const InforPro = () => {
             options={[
               {
                 value: "NONE",
-                label: (
-                  <span style={{ color: "#8c8c8c", fontWeight: 600 }}>Chưa có</span>
-                ),
+                label: <span style={{ color: "#8c8c8c", fontWeight: 600 }}>Chưa có</span>,
               },
               ...PAYMENT_STATUS_OPTIONS.map((s) => ({
                 value: s.value,
@@ -521,16 +471,14 @@ const InforPro = () => {
           style={{ width: "100%" }}
           value={newStatus}
           onChange={(val) => setNewStatus(val)}
-          options={STATUS_OPTIONS
-            .filter((s) => s.value === "CONFIRM")
-            .map((s) => ({
-              value: s.value,
-              label: (
-                <span style={{ color: STATUS_COLOR[s.value], fontWeight: 600 }}>
-                  {s.label}
-                </span>
-              ),
-            }))}
+          options={STATUS_OPTIONS.map((s) => ({
+            value: s.value,
+            label: (
+              <span style={{ color: STATUS_COLOR[s.value], fontWeight: 600 }}>
+                {s.label}
+              </span>
+            ),
+          }))}
         />
       </Modal>
     </div>
