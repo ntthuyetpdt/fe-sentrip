@@ -7,6 +7,12 @@ import GetHoaDonModal from "../../components/GetHoaDonModal";
 import { viewInvoice } from "../../../api/api";
 import ButtonCustom from "../../../components/custom/button";
 import styles from "./GetHoaDon.module.scss";
+import {
+  STATUS_OPTIONS,
+  STATUS_COLOR,
+  STATUS_LABEL,
+  STATUS_TAG_COLOR,
+} from "./text";
 
 export interface Invoice {
   amount: number;
@@ -26,24 +32,6 @@ const TIME_OPTIONS = [
   { value: "7DAYS", label: "7 ngày gần đây" },
   { value: "30DAYS", label: "30 ngày gần đây" },
 ];
-
-const STATUS_OPTIONS = [
-  { value: "UNPAID", label: "Chưa thanh toán", color: "#ff4d4f" },
-  { value: "INVOICE_HAS_BEEN_ISSUED", label: "Đã xuất hóa đơn", color: "#1677ff" },
-  { value: "GENERATED", label: "Đã tạo hóa đơn", color: "#52c41a" },
-];
-
-const STATUS_COLOR: Record<string, string> = {
-  UNPAID: "#ff4d4f",
-  INVOICE_HAS_BEEN_ISSUED: "#1677ff",
-  GENERATED: "#52c41a",
-};
-
-const STATUS_LABEL: Record<string, string> = {
-  UNPAID: "Chưa thanh toán",
-  INVOICE_HAS_BEEN_ISSUED: "Đã xuất hóa đơn",
-  GENERATED: "Đã tạo hóa đơn",
-};
 
 const GetHoaDon = () => {
   const [originData, setOriginData] = useState<Invoice[]>([]);
@@ -71,28 +59,25 @@ const GetHoaDon = () => {
     const now = new Date();
 
     return originData.filter((item) => {
-      // Mã hóa đơn
       if (
         filterInvoiceCode.trim() &&
         !item.invoiceCode.toLowerCase().includes(filterInvoiceCode.trim().toLowerCase())
-      ) return false;
+      )
+        return false;
 
-      // Mã đơn hàng
       if (
         filterOrderCode.trim() &&
         !item.orderCode.toLowerCase().includes(filterOrderCode.trim().toLowerCase())
-      ) return false;
+      )
+        return false;
 
-      // Số tiền
       if (amountMin !== "" && !isNaN(Number(amountMin)) && item.amount < Number(amountMin))
         return false;
       if (amountMax !== "" && !isNaN(Number(amountMax)) && item.amount > Number(amountMax))
         return false;
 
-      // Trạng thái
       if (filterStatus && item.status !== filterStatus) return false;
 
-      // Thời gian
       if (timeFilter !== "ALL") {
         const date = new Date(item.generatedAt);
         if (timeFilter === "TODAY") {
@@ -100,7 +85,8 @@ const GetHoaDon = () => {
             date.getDate() !== now.getDate() ||
             date.getMonth() !== now.getMonth() ||
             date.getFullYear() !== now.getFullYear()
-          ) return false;
+          )
+            return false;
         }
         if (timeFilter === "7DAYS") {
           const diff = (now.getTime() - date.getTime()) / (1000 * 3600 * 24);
@@ -201,15 +187,11 @@ const GetHoaDon = () => {
     {
       title: "Trạng thái",
       dataIndex: "status",
-      render: (status: string) => {
-        const label = STATUS_LABEL[status] || status;
-        const color = STATUS_COLOR[status] || "default";
-        return (
-          <Tag color={color === "#ff4d4f" ? "red" : color === "#1677ff" ? "blue" : "green"}>
-            {label}
-          </Tag>
-        );
-      },
+      render: (status: string) => (
+        <Tag color={STATUS_TAG_COLOR[status] ?? "default"}>
+          {STATUS_LABEL[status] ?? status}
+        </Tag>
+      ),
     },
     {
       title: "Ngày tạo",
@@ -222,7 +204,10 @@ const GetHoaDon = () => {
         <Space>
           <EyeOutlined
             style={{ color: "violet", cursor: "pointer" }}
-            onClick={() => { setSelected(record); setModalOpen(true); }}
+            onClick={() => {
+              setSelected(record);
+              setModalOpen(true);
+            }}
           />
           {record.status === "GENERATED" && (
             <Button
@@ -237,26 +222,14 @@ const GetHoaDon = () => {
     },
   ];
 
-  useEffect(() => { fetchInvoices(); }, []);
+  useEffect(() => {
+    fetchInvoices();
+  }, []);
 
   return (
     <div>
       {/* ── Filter bar ── */}
       <div className={styles.filterBar}>
-
-        {/* Mã hóa đơn */}
-        {/* <div className={styles.filterGroup}>
-          <span className={styles.filterLabel}>Mã hóa đơn</span>
-          <input
-            className={styles.filterInput}
-            type="text"
-            placeholder="Tìm mã hóa đơn..."
-            value={filterInvoiceCode}
-            onChange={(e) => setFilterInvoiceCode(e.target.value)}
-            onKeyDown={handleKeyDown}
-          />
-        </div> */}
-
         <div className={styles.filterDivider} />
 
         {/* Mã đơn hàng */}
@@ -311,7 +284,9 @@ const GetHoaDon = () => {
             style={{ width: 200, height: 36 }}
             options={STATUS_OPTIONS.map((s) => ({
               value: s.value,
-              label: <span style={{ color: s.color, fontWeight: 600 }}>{s.label}</span>,
+              label: (
+                <span style={{ color: s.color, fontWeight: 600 }}>{s.label}</span>
+              ),
             }))}
           />
         </div>
@@ -365,7 +340,10 @@ const GetHoaDon = () => {
         footer={null}
       >
         <Upload
-          beforeUpload={(file) => { setSelectedFile(file); return false; }}
+          beforeUpload={(file) => {
+            setSelectedFile(file);
+            return false;
+          }}
           maxCount={1}
         >
           <Button icon={<UploadOutlined />}>Chọn file</Button>

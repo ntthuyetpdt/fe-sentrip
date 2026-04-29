@@ -245,8 +245,8 @@ const GetDoanhThuPro = () => {
   const hasFilter = activeFiltersCount > 0;
 
   const filteredData = data.filter((item) => {
-    const matchName = item.productName.toLowerCase().includes(filterProductName.toLowerCase());
-    const matchService = item.additionalServices.toLowerCase().includes(filterAdditionalServices.toLowerCase());
+    const matchName = (item.productName ?? "").toLowerCase().includes(filterProductName.toLowerCase());
+  const matchService = (item.additionalServices ?? "").toLowerCase().includes(filterAdditionalServices.toLowerCase());
 
     let matchCustomers = true;
     if (filterMinCustomers !== "" && filterMaxCustomers !== "") {
